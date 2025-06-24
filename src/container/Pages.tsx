@@ -1,7 +1,5 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
-// import Typography from "@mui/material/Typography";
-// import { Divider } from "@mui/material";
 
 interface PagesProps {
   children?: React.ReactNode;
