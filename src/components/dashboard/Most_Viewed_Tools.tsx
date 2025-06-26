@@ -34,7 +34,7 @@ const Most_Viewed_Tools = () => {
                 alt={`Logo of ${tool.name}`}
                 className="w-[35px] h-[35px]"
               />
-              <Typography fontWeight={400} fontSize={14}>
+              <Typography fontWeight={400} fontSize={14} color="#1D1F2C">
                 {tool.name}
               </Typography>
             </div>
