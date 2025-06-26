@@ -4,6 +4,10 @@ import Pages from "../container/Pages";
 import { IoNotifications } from "react-icons/io5";
 import logo from "../assets/logo.png";
 import { useState } from "react";
+import Total_Tools from "../components/dashboard/metrics/Total_Tools";
+import Total_Categories from "../components/dashboard/metrics/Total_Categories";
+import Pending_Reviews from "../components/dashboard/metrics/Pending_Reviews";
+import Total_Reviews from "../components/dashboard/metrics/Total_Reviews";
 
 const Dashboard = () => {
   const [period, setPeriod] = useState<number>(0);
@@ -14,6 +18,13 @@ const Dashboard = () => {
     { label: "30 Days" },
     { label: "7 Days" },
     { label: "24 Hours" },
+  ];
+
+  const metrics = [
+    { component: <Total_Tools /> },
+    { component: <Total_Categories /> },
+    { component: <Pending_Reviews /> },
+    { component: <Total_Reviews /> },
   ];
 
   return (
@@ -83,6 +94,10 @@ const Dashboard = () => {
               ))}
             </ButtonGroup>
           </div>
+        </div>
+
+        <div className="flex gap-[5px] pt-[.5rem]">
+          {metrics.map((metric) => metric.component)}
         </div>
       </div>
     </Pages>
