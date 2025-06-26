@@ -11,6 +11,7 @@ import Total_Reviews from "../components/dashboard/metrics/Total_Reviews";
 import Most_Viewed_Tools from "../components/dashboard/Most_Viewed_Tools";
 import Top_Rated_Tools from "../components/dashboard/Top_Rated_Tools";
 import Top_Categories from "../components/dashboard/Top_Categories";
+import Recently_Added from "../components/dashboard/Recently_Added";
 
 const Dashboard = () => {
   const [period, setPeriod] = useState<number>(0);
@@ -101,8 +102,12 @@ const Dashboard = () => {
 
         <div className="flex gap-[2rem]">
           <div>
-            <div className="flex gap-[5px] pt-[.5rem]">
+            <div className="flex gap-[.5rem] pt-[.5rem]">
               {metrics.map((metric) => metric.component)}
+            </div>
+
+            <div className="pt-[.5rem]">
+              <Recently_Added />
             </div>
 
             <div className="pt-[.5rem] w-[767px]">

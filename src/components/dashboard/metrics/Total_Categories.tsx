@@ -4,7 +4,7 @@ import { Typography } from "@mui/material";
 
 const Total_Categories = () => {
   return (
-    <div className="flex flex-col gap-[8px] w-[180px] bg-[#f5f3f3] py-[20px] px-[10px] rounded-[8px] ">
+    <div className="flex flex-col gap-[8px] w-[185px] bg-[#f5f3f3] py-[20px] px-[10px] rounded-[8px] ">
       <div className="flex gap-[4px] items-center">
         <img src={tools} className="w-[16px] h-[16px]" />
         <Typography
