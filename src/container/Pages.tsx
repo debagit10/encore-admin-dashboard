@@ -9,12 +9,12 @@ interface PagesProps {
 const Pages: React.FC<PagesProps> = ({ children }) => {
   return (
     <div className="flex">
-      <div>
+      <div className="fixed">
         <Sidebar />
       </div>
 
-      <div className="w-[100%]">
-        <div className="bg-[#FAFAFA] h-[90vh]">{children}</div>
+      <div className="ml-[280px] w-[100%]">
+        <div className="bg-[#FAFAFA] mt-[5rem] h-[90vh]">{children}</div>
       </div>
     </div>
   );

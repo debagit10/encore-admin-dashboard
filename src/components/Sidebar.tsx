@@ -63,7 +63,7 @@ const Sidebar = () => {
   }, [location.pathname]);
 
   return (
-    <div className="w-[280px] sidebar-gradient flex flex-col justify-between text-white  h-[100vh]">
+    <div className="w-[280px] sidebar-gradient flex flex-col justify-between text-white h-[100vh]">
       <div>
         <div className="flex justify-between items-center px-[1.5rem]">
           <div

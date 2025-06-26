@@ -34,7 +34,7 @@ const Dashboard = () => {
   return (
     <Pages>
       <Navbar page="Dashboard">
-        <div className="flex gap-[1rem] items-center  ">
+        <div className="flex gap-[1rem] items-center mb-[5rem]  ">
           <IoNotifications color="#777777" size={20} />
 
           <div className="flex gap-[11px] items-center bg-[#E7F3FD] rounded-[8px] h-[56px] pl-[1rem] pr-[2rem] ">
@@ -116,7 +116,7 @@ const Dashboard = () => {
           </div>
 
           <div>
-            <div className="w-[356px] pt-[.5rem]">
+            <div className="w-[356px]  pt-[.5rem]">
               <Top_Categories />
             </div>
 
