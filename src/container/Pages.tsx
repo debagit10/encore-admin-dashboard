@@ -14,7 +14,7 @@ const Pages: React.FC<PagesProps> = ({ children }) => {
       </div>
 
       <div className="w-[100%]">
-        <div className="px-5 bg-[#FAFAFA] h-[90vh]">{children}</div>
+        <div className="bg-[#FAFAFA] h-[90vh]">{children}</div>
       </div>
     </div>
   );
