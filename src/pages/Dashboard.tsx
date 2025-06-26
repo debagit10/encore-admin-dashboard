@@ -10,6 +10,7 @@ import Pending_Reviews from "../components/dashboard/metrics/Pending_Reviews";
 import Total_Reviews from "../components/dashboard/metrics/Total_Reviews";
 import Most_Viewed_Tools from "../components/dashboard/Most_Viewed_Tools";
 import Top_Rated_Tools from "../components/dashboard/Top_Rated_Tools";
+import Top_Categories from "../components/dashboard/Top_Categories";
 
 const Dashboard = () => {
   const [period, setPeriod] = useState<number>(0);
@@ -109,8 +110,14 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="w-[356px] pt-[.5rem]">
-            <Top_Rated_Tools />
+          <div>
+            <div className="w-[356px] pt-[.5rem]">
+              <Top_Categories />
+            </div>
+
+            <div className="w-[356px] pt-[.5rem]">
+              <Top_Rated_Tools />
+            </div>
           </div>
         </div>
       </div>
