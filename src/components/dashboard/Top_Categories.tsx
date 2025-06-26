@@ -25,7 +25,7 @@ const Top_Categories = () => {
         </Typography>
       </div>
 
-      <div className="flex flex-col gap-[16px] mt-[12px]">
+      <div className="h-[165px] overflow-y-auto pr-[8px] flex flex-col gap-[16px] mt-[12px]">
         {categories.map((category) => (
           <div className="flex justify-between items-center">
             <div className="flex gap-[8px] items-center">

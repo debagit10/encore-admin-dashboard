@@ -34,7 +34,7 @@ const Dashboard = () => {
   return (
     <Pages>
       <Navbar page="Dashboard">
-        <div className="flex gap-[1rem] items-center mb-[5rem]  ">
+        <div className="flex gap-[1rem] items-center mb-[5rem]">
           <IoNotifications color="#777777" size={20} />
 
           <div className="flex gap-[11px] items-center bg-[#E7F3FD] rounded-[8px] h-[56px] pl-[1rem] pr-[2rem] ">
@@ -52,7 +52,7 @@ const Dashboard = () => {
         </div>
       </Navbar>
 
-      <div className="px-[33.5px] pt-[.5rem]">
+      <div className="px-[33.5px]">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-[8px]">
             <Typography fontWeight={500} fontSize={24} color="#1D1F2C">

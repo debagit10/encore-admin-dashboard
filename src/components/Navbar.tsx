@@ -9,15 +9,15 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ children, page, component }) => {
   return (
-    <div className="flex justify-between fixed top-0 z-1 w-[82.5%] items-center px-[33.5px] py-[13px] bg-[#FFFFFF] border-b-[1.2px] border-[#F2F2F3]">
-      <div>
+    <div className="flex justify-between fixed top-0 z-1 w-[82.5%] h-[80px] items-center px-[33.5px] py-[13px] bg-[#FFFFFF] border-b-[1.2px] border-[#F2F2F3]">
+      <div className="">
         <Typography fontWeight={500} fontSize={18}>
           <span className="text-[#777777]">Overview</span> • {page}{" "}
           {component && `• ${component}`}
         </Typography>
       </div>
 
-      <div>{children}</div>
+      <div className="mt-[5rem]">{children}</div>
     </div>
   );
 };

@@ -25,9 +25,9 @@ const Most_Viewed_Tools = () => {
         </Typography>
       </div>
 
-      <div className="flex flex-col gap-[16px] mt-[12px]">
+      <div className="h-[180px] overflow-y-auto pr-[8px] flex flex-col gap-[16px] mt-[12px]">
         {tools.map((tool) => (
-          <div className="flex justify-between items-center">
+          <div key={tool.name} className="flex justify-between items-center">
             <div className="flex gap-[8px] items-center">
               <img
                 src={tool.icon}
