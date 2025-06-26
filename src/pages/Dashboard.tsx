@@ -8,6 +8,7 @@ import Total_Tools from "../components/dashboard/metrics/Total_Tools";
 import Total_Categories from "../components/dashboard/metrics/Total_Categories";
 import Pending_Reviews from "../components/dashboard/metrics/Pending_Reviews";
 import Total_Reviews from "../components/dashboard/metrics/Total_Reviews";
+import Most_Viewed_Tools from "../components/dashboard/Most_Viewed_Tools";
 
 const Dashboard = () => {
   const [period, setPeriod] = useState<number>(0);
@@ -98,6 +99,10 @@ const Dashboard = () => {
 
         <div className="flex gap-[5px] pt-[.5rem]">
           {metrics.map((metric) => metric.component)}
+        </div>
+
+        <div className="pt-[.5rem] w-[767px]">
+          <Most_Viewed_Tools />
         </div>
       </div>
     </Pages>
