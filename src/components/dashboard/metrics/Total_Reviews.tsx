@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { RiArrowUpSFill } from "react-icons/ri";
-import tools from "../../../icons/ai.png";
+import tools from "../../../icons/metrics/reviews.png";
 
 const Total_Reviews = () => {
   return (

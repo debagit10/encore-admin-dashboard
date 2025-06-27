@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import tools from "../../../icons/ai.png";
+import tools from "../../../icons/metrics/pending.png";
 //import { RiArrowDownSFill } from "react-icons/ri";
 
 const Pending_Reviews = () => {

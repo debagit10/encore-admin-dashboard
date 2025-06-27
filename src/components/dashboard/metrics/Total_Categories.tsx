@@ -1,5 +1,5 @@
 // import { RiArrowDownSFill } from "react-icons/ri";
-import tools from "../../../icons/ai.png";
+import tools from "../../../icons/metrics/category.png";
 import { Typography } from "@mui/material";
 
 const Total_Categories = () => {

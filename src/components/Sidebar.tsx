@@ -2,22 +2,22 @@
 import { Avatar, Divider, Typography } from "@mui/material";
 
 import logo from "../assets/logo.png";
-import bulb from "../icons/bulb.png";
+import bulb from "../icons/sidebar/bulb.png";
 
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import dashboard from "../icons/dashboard.png";
-import tools from "../icons/tools.png";
-import categories from "../icons/categories.png";
-import review from "../icons/review.png";
-import settings from "../icons/settings.png";
+import dashboard from "../icons/sidebar/dashboard.png";
+import tools from "../icons/sidebar/tools.png";
+import categories from "../icons/sidebar/categories.png";
+import review from "../icons/sidebar/review.png";
+import settings from "../icons/sidebar/settings.png";
 
-import dashboard_2 from "../icons/dashboard_2.png";
-import tools_2 from "../icons/tools_2.png";
-import categories_2 from "../icons/categories_2.png";
-import review_2 from "../icons/review_2.png";
-import settings_2 from "../icons/settings_2.png";
+import dashboard_2 from "../icons/sidebar/dashboard_2.png";
+import tools_2 from "../icons/sidebar/tools_2.png";
+import categories_2 from "../icons/sidebar/categories_2.png";
+import review_2 from "../icons/sidebar/review_2.png";
+import settings_2 from "../icons/sidebar/settings_2.png";
 
 const sideItems = [
   {
