@@ -34,7 +34,7 @@ const Dashboard = () => {
   return (
     <Pages>
       <Navbar page="Dashboard">
-        <div className="flex gap-[1rem] items-center mb-[5rem]">
+        <div className="flex gap-[1rem] items-center">
           <IoNotifications color="#777777" size={20} />
 
           <div className="flex gap-[11px] items-center bg-[#E7F3FD] rounded-[8px] h-[56px] pl-[1rem] pr-[2rem] ">
@@ -63,7 +63,7 @@ const Dashboard = () => {
             </Typography>
           </div>
 
-          <div>
+          <div className="">
             <ButtonGroup
               variant="outlined"
               sx={{
@@ -75,7 +75,6 @@ const Dashboard = () => {
                   borderRadius: "8px !important",
                   color: "#667085",
                 },
-                "& .MuiButton-outlined": {},
               }}
             >
               {buttonGroup.map((button, index) => (
