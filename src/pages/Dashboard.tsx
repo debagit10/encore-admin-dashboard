@@ -2,7 +2,7 @@ import { Button, ButtonGroup, Typography } from "@mui/material";
 import Navbar from "../components/Navbar";
 import Pages from "../container/Pages";
 import { IoNotifications } from "react-icons/io5";
-import logo from "../assets/logo.png";
+import avatar from "../assets/avatar.png";
 import { useState } from "react";
 import Total_Tools from "../components/dashboard/metrics/Total_Tools";
 import Total_Categories from "../components/dashboard/metrics/Total_Categories";
@@ -38,7 +38,7 @@ const Dashboard = () => {
           <IoNotifications color="#777777" size={20} />
 
           <div className="flex gap-[11px] items-center bg-[#E7F3FD] rounded-[8px] h-[56px] pl-[1rem] pr-[2rem] ">
-            <img src={logo} height={40} width={40} />
+            <img src={avatar} height={40} width={40} />
 
             <div className="flex flex-col gap-[4px]">
               <Typography fontWeight={500} fontSize={12} color="#0167C4">
