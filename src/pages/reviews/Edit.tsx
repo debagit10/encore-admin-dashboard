@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import Pages from "../../container/Pages";
 import Navbar from "../../components/Navbar";
-import { Button, Divider, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  Rating,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { IoMdArrowBack } from "react-icons/io";
 
 import chat_gpt from "../../assets/chatgpt.png";
 
 import { useNavigate } from "react-router-dom";
-import Actions from "../../components/reviews/Actions";
-import DayAndTime from "../../utils/DayAndTime";
-import Rating from "../../utils/Rating";
 
 interface ReviewDetails {
   id: string;
@@ -23,9 +27,21 @@ interface ReviewDetails {
   status: boolean;
 }
 
-const View = () => {
+const Edit = () => {
   const [reviewData, setReviewData] = useState<ReviewDetails>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [focusedFields, setFocusedFields] = useState({
+    comment: false,
+  });
+
+  const handleFocus = (field: string) => {
+    setFocusedFields((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const handleBlur = (field: string) => {
+    setFocusedFields((prev) => ({ ...prev, [field]: false }));
+  };
 
   const navigate = useNavigate();
 
@@ -36,7 +52,7 @@ const View = () => {
 
   return (
     <Pages>
-      <Navbar page="Tool Management" component="Chat gpt" />
+      <Navbar page="Tool Management" component="Chat gpt" edit />
 
       <div className="px-[33.5px]">
         <div className="flex justify-start mt-[1rem]">
@@ -61,13 +77,9 @@ const View = () => {
           <div className="flex flex-col gap-[10px] w-[590px]">
             <img src={chat_gpt} className="w-[48px] h-[48px]" />
 
-            <div className="flex justify-between">
-              <Typography fontWeight={500} fontSize={24} color="#302F37">
-                Chatgpt
-              </Typography>
-
-              <Actions />
-            </div>
+            <Typography fontWeight={500} fontSize={24} color="#302F37">
+              Chatgpt
+            </Typography>
           </div>
         </div>
 
@@ -87,38 +99,11 @@ const View = () => {
                   }}
                   fontSize={14}
                 >
-                  Name
-                </Typography>
-                <TextField
-                  disabled
-                  name="name"
-                  value={reviewData?.name}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    backgroundColor: "#F9F9FB",
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
-
-              <div>
-                <Typography
-                  fontWeight={600}
-                  sx={{
-                    color: "#00294E",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
                   User ID
                 </Typography>
                 <TextField
                   disabled
-                  name="short_desc"
+                  name="user_id"
                   value={reviewData?.user_id}
                   type="text"
                   size="small"
@@ -135,7 +120,7 @@ const View = () => {
                 <Typography
                   fontWeight={600}
                   sx={{
-                    color: "#00294E",
+                    color: focusedFields.comment ? "#0167C4" : "#00294E",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
@@ -143,8 +128,10 @@ const View = () => {
                   Comment to be reviewed
                 </Typography>
                 <TextField
-                  disabled
-                  name="long_desc"
+                  onFocus={() => handleFocus("comment")}
+                  onBlur={() => handleBlur("comment")}
+                  focused={focusedFields.comment}
+                  name="short_desc"
                   value={reviewData?.comment}
                   type="text"
                   size="small"
@@ -160,14 +147,17 @@ const View = () => {
               <div>
                 <Typography
                   fontWeight={600}
-                  sx={{ color: "#00294E", fontFamily: "Open Sans, sans-serif" }}
+                  sx={{
+                    color: "#00294E",
+                    fontFamily: "Open Sans, sans-serif",
+                  }}
                   fontSize={14}
                 >
                   Category
                 </Typography>
                 <TextField
                   disabled
-                  name="category"
+                  name="long_desc"
                   value={reviewData?.category}
                   type="text"
                   size="small"
@@ -193,8 +183,8 @@ const View = () => {
                 </Typography>
                 <TextField
                   disabled
-                  name="demo_url"
-                  value={<DayAndTime date={reviewData?.date} />}
+                  name="date"
+                  value={reviewData?.date}
                   type="text"
                   size="small"
                   fullWidth
@@ -233,7 +223,7 @@ const View = () => {
                 }}
                 onClick={submit}
               >
-                {loading ? "Approving..." : "Approve"}
+                {loading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </div>
@@ -243,4 +233,4 @@ const View = () => {
   );
 };
 
-export default View;
+export default Edit;

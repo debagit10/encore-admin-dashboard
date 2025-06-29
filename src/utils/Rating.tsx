@@ -2,11 +2,11 @@ import React from "react";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 interface RatingProps {
-  value: number;
+  value?: number;
   max?: number;
 }
 
-const Rating: React.FC<RatingProps> = ({ value, max = 5 }) => {
+const Rating: React.FC<RatingProps> = ({ value = 0, max = 5 }) => {
   const stars = [];
 
   for (let i = 1; i <= max; i++) {
