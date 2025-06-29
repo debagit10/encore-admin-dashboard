@@ -69,9 +69,9 @@ const View = () => {
             <div className="flex flex-col justify-center gap-[16px] ">
               <div>
                 <Typography
-                  fontWeight={500}
+                  fontWeight={600}
                   sx={{
-                    color: "#55555C",
+                    color: "#00294E",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
@@ -79,12 +79,14 @@ const View = () => {
                   Name
                 </Typography>
                 <TextField
+                  disabled
                   name="name"
                   value={toolData?.name}
                   type="text"
                   size="small"
                   fullWidth
                   sx={{
+                    backgroundColor: "#F9F9FB",
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
                     },
@@ -94,9 +96,9 @@ const View = () => {
 
               <div>
                 <Typography
-                  fontWeight={500}
+                  fontWeight={600}
                   sx={{
-                    color: "#55555C",
+                    color: "#00294E",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
@@ -104,6 +106,7 @@ const View = () => {
                   Short Decription
                 </Typography>
                 <TextField
+                  disabled
                   name="short_desc"
                   value={toolData?.short_desc}
                   type="text"
@@ -119,9 +122,9 @@ const View = () => {
 
               <div>
                 <Typography
-                  fontWeight={500}
+                  fontWeight={600}
                   sx={{
-                    color: "#55555C",
+                    color: "#00294E",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
@@ -129,6 +132,7 @@ const View = () => {
                   Long Description
                 </Typography>
                 <TextField
+                  disabled
                   name="long_desc"
                   value={toolData?.long_desc}
                   type="text"
@@ -144,13 +148,14 @@ const View = () => {
 
               <div>
                 <Typography
-                  fontWeight={500}
-                  sx={{ color: "#55555C", fontFamily: "Open Sans, sans-serif" }}
+                  fontWeight={600}
+                  sx={{ color: "#00294E", fontFamily: "Open Sans, sans-serif" }}
                   fontSize={14}
                 >
                   Category
                 </Typography>
                 <TextField
+                  disabled
                   name="category"
                   value={toolData?.category}
                   type="text"
@@ -166,9 +171,9 @@ const View = () => {
 
               <div>
                 <Typography
-                  fontWeight={500}
+                  fontWeight={600}
                   sx={{
-                    color: "#55555C",
+                    color: "#00294E",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
@@ -176,6 +181,7 @@ const View = () => {
                   Demo URL
                 </Typography>
                 <TextField
+                  disabled
                   name="demo_url"
                   value={toolData?.demo_link}
                   type="text"
