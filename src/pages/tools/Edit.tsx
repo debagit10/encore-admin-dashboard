@@ -7,7 +7,6 @@ import { IoMdArrowBack } from "react-icons/io";
 import chat_gpt from "../../assets/chatgpt.png";
 
 import { useNavigate } from "react-router-dom";
-import Actions from "../../components/tools/Actions";
 
 interface ToolDetails {
   name: string;
@@ -19,13 +18,20 @@ interface ToolDetails {
   id: string;
 }
 
-const View = () => {
+const Edit = () => {
   const [toolData, setToolData] = useState<ToolDetails>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
+
+  const submit = async () => {
+    try {
+    } catch (error) {}
+  };
+
   return (
     <Pages>
-      <Navbar page="Tool Management" component="Chat gpt" />
+      <Navbar page="Tool Management" component="Chat gpt" edit />
 
       <div className="px-[33.5px]">
         <div className="flex justify-start mt-[1rem]">
@@ -50,13 +56,9 @@ const View = () => {
           <div className="flex flex-col gap-[10px] w-[590px]">
             <img src={chat_gpt} className="w-[48px] h-[48px]" />
 
-            <div className="flex justify-between">
-              <Typography fontWeight={500} fontSize={24} color="#302F37">
-                Chatgpt
-              </Typography>
-
-              <Actions toolDetails={toolData} />
-            </div>
+            <Typography fontWeight={500} fontSize={24} color="#302F37">
+              Chatgpt
+            </Typography>
           </div>
         </div>
 
@@ -188,6 +190,22 @@ const View = () => {
                   }}
                 />
               </div>
+
+              <Button
+                disabled={loading}
+                disableElevation
+                variant="contained"
+                sx={{
+                  width: "165px",
+                  padding: "10px",
+                  borderRadius: "12px",
+                  backgroundColor: "#0167C4",
+                  textTransform: "capitalize",
+                }}
+                onClick={submit}
+              >
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
             </div>
           </div>
         </div>
@@ -196,4 +214,4 @@ const View = () => {
   );
 };
 
-export default View;
+export default Edit;

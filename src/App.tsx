@@ -16,6 +16,9 @@ const Categories = React.lazy(() => import("./pages/Categories"));
 const Reviews = React.lazy(() => import("./pages/reviews/Manage"));
 const Settings = React.lazy(() => import("./pages/Settings"));
 
+const View_Tool = React.lazy(() => import("./pages/tools/View"));
+const Edit_Tool = React.lazy(() => import("./pages/tools/Edit"));
+
 function App() {
   usePageLoader();
 
@@ -31,6 +34,9 @@ function App() {
         <Route path="/categories" element={<Categories />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/settings" element={<Settings />} />
+
+        <Route path="/tool/view/:id" element={<View_Tool />} />
+        <Route path="/tool/edit/:id" element={<Edit_Tool />} />
       </Routes>
     </>
   );
