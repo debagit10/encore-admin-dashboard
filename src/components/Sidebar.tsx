@@ -19,7 +19,9 @@ import categories_2 from "../icons/sidebar/categories_2.png";
 import review_2 from "../icons/sidebar/review_2.png";
 import settings_2 from "../icons/sidebar/settings_2.png";
 
-const sideItems = [
+import { HiOutlineUsers } from "react-icons/hi";
+
+const sideItems_1 = [
   {
     id: 0,
     name: "Dashboard",
@@ -43,13 +45,6 @@ const sideItems = [
     route: "/categories",
   },
   { id: 3, name: "Reviews", icon: review, icon_2: review_2, route: "/reviews" },
-  {
-    id: 4,
-    name: "Settings",
-    icon: settings,
-    icon_2: settings_2,
-    route: "/settings",
-  },
 ];
 
 const Sidebar = () => {
@@ -84,7 +79,7 @@ const Sidebar = () => {
           <img src={bulb} alt="illustration of innovation" />
         </div>
 
-        <Divider />
+        <Divider sx={{ borderColor: "#2B2B33" }} />
 
         <div className="m-[1.5rem] p-[1rem] rounded-[12px] flex gap-[7px] bg-[#2B2B33]">
           <div>
@@ -110,10 +105,10 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <Divider />
+        <Divider sx={{ borderColor: "#2B2B33" }} />
 
-        <div className="flex flex-col gap-[4px] mt-[1rem] ">
-          {sideItems.map((item, index) => {
+        <div className="flex flex-col gap-[4px] my-[1rem] ">
+          {sideItems_1.map((item, index) => {
             return (
               <div
                 className={`${
@@ -155,6 +150,77 @@ const Sidebar = () => {
               </div>
             );
           })}
+        </div>
+
+        <Divider sx={{ borderColor: "#2B2B33" }} />
+
+        <div className="flex flex-col gap-[4px] my-[1rem] ">
+          <div
+            className={`${
+              activeRoute === "/admins" ? "border-r-6 border-[#0167C4]" : ""
+            }`}
+          >
+            <div
+              className={`flex items-center gap-[12px] py-[12px] mx-[1.5rem] px-[16px] rounded-[8px] cursor-pointer transition-all duration-300 ease-in-out ${
+                activeRoute === "/admins"
+                  ? "bg-[#2B2B33] text-[#FFFFFF] font-semibold"
+                  : ""
+              }`}
+              onClick={() => {
+                navigate("/admins");
+                setActiveRoute("/admins");
+              }}
+            >
+              <div className="text-[#0167C4]">
+                <HiOutlineUsers
+                  color={activeRoute === "/admins" ? "#0167C4" : "#AAAAAD"}
+                />
+              </div>
+              <div>
+                <Typography
+                  fontWeight={400}
+                  sx={{ fontFamily: "Open Sans, sans-serif" }}
+                  fontSize="14px"
+                >
+                  Admins
+                </Typography>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className={`${
+              activeRoute === "/settings" ? "border-r-6 border-[#0167C4]" : ""
+            }`}
+          >
+            <div
+              className={`flex items-center gap-[12px] py-[12px] mx-[1.5rem] px-[16px] rounded-[8px] cursor-pointer transition-all duration-300 ease-in-out ${
+                activeRoute === "/settings"
+                  ? "bg-[#2B2B33] text-[#FFFFFF] font-semibold"
+                  : ""
+              }`}
+              onClick={() => {
+                navigate("/settings");
+                setActiveRoute("/settings");
+              }}
+            >
+              <div className="text-[#0167C4]">
+                <img
+                  color={activeRoute === "/settings" ? "#0167C4" : "white"}
+                  src={activeRoute === "/settings" ? settings_2 : settings}
+                />
+              </div>
+              <div>
+                <Typography
+                  fontWeight={400}
+                  sx={{ fontFamily: "Open Sans, sans-serif" }}
+                  fontSize="14px"
+                >
+                  Settings
+                </Typography>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

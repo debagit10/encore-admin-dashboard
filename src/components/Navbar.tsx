@@ -13,12 +13,10 @@ const Navbar: React.FC<NavbarProps> = ({ children, page, edit, component }) => {
     <div className="flex justify-between  h-[80px] items-center px-[33.5px]  bg-[#FFFFFF] border-b-[1.2px] border-[#F2F2F3]">
       <div>
         <Typography fontWeight={500} fontSize={18}>
-          <span className="text-[#777777]">Overview</span>
-
           {page && (
             <>
               <span style={{ color: component ? "#777777" : "black" }}>
-                {" • "} {page}
+                {page}
               </span>
             </>
           )}
