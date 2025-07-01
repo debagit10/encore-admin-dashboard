@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Divider, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { CiMenuKebab } from "react-icons/ci";
 
-import edit_icon from "../../icons/tool_actions.tsx/edit.png";
+import edit_icon from "../../icons/tool_actions/edit.png";
 
 import { useNavigate } from "react-router-dom";
 import Delete_Review from "../../modals/review/Delete_Review";

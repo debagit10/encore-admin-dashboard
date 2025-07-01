@@ -12,7 +12,7 @@ const Verify_Email = React.lazy(() => import("./pages/auth/Verify_Email"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const Tools = React.lazy(() => import("./pages/tools/Manage"));
-const Categories = React.lazy(() => import("./pages/Categories"));
+const Categories = React.lazy(() => import("./pages/categories/Manage"));
 const Reviews = React.lazy(() => import("./pages/reviews/Manage"));
 const Settings = React.lazy(() => import("./pages/Settings"));
 const Admins = React.lazy(() => import("./pages/Admins"));
@@ -22,6 +22,8 @@ const Edit_Tool = React.lazy(() => import("./pages/tools/Edit"));
 
 const View_Review = React.lazy(() => import("./pages/reviews/View"));
 const Edit_Review = React.lazy(() => import("./pages/reviews/Edit"));
+
+const View_Category = React.lazy(() => import("./pages/categories/View"));
 
 function App() {
   usePageLoader();
@@ -45,6 +47,8 @@ function App() {
 
         <Route path="/review/view/:id" element={<View_Review />} />
         <Route path="/review/edit/:id" element={<Edit_Review />} />
+
+        <Route path="/category/view/:id" element={<View_Category />} />
       </Routes>
     </>
   );

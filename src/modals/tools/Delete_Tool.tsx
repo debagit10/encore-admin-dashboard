@@ -11,7 +11,7 @@ import { IoCloseOutline } from "react-icons/io5";
 //import api from "../../utils/axiosInstance";
 import Toast from "../../utils/Toast";
 import delete_img from "../../assets/delete_img.png";
-import delete_icon from "../../icons/tool_actions.tsx/delete.png";
+import delete_icon from "../../icons/tool_actions/delete.png";
 
 interface ToolDetails {
   id?: string;

@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 //import api from "../../utils/axiosInstance";
 import Toast from "../../utils/Toast";
-import edit from "../../icons/tool_actions.tsx/edit.png";
+import edit from "../../icons/tool_actions/edit.png";
 
 interface AdminDetails {
   name: string;

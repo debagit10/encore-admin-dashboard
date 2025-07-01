@@ -10,7 +10,6 @@ import React, { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 //import api from "../../utils/axiosInstance";
 import Toast from "../../utils/Toast";
-import delete_img from "../../assets/delete_img.png";
 
 import { MdBlock } from "react-icons/md";
 
@@ -128,7 +127,7 @@ const Suspend_Admin: React.FC<DeleteProps> = () => {
         <DialogContent sx={{ width: "379px" }}>
           <div className="flex flex-col gap-[2rem]">
             <div className="flex justify-center">
-              <img src={delete_img} />
+              <MdBlock className="w-[131px] h-[106px]" />
             </div>
 
             <div className="flex flex-col gap-[1rem] justify-center text-center">
