@@ -20,22 +20,25 @@ interface ToastState {
   severity: "success" | "info" | "error" | "warning";
 }
 
-interface ToolDetails {
-  name: string;
-  description: string;
+interface UserDetails {
+  first_name: string;
+  last_name: string;
+  email: string;
 }
 
-const Edit = () => {
+const Edit_Profile = () => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState(false);
-  const [toolDetails, setToolDetails] = useState<ToolDetails>({
-    name: "",
-    description: "",
+  const [userData, setUserData] = useState<UserDetails>({
+    first_name: "",
+    last_name: "",
+    email: "",
   });
 
   const [focusedFields, setFocusedFields] = useState({
-    name: false,
-    description: false,
+    first_name: false,
+    last_name: false,
+    email: false,
   });
 
   const [toast, setToast] = useState<ToastState>({
@@ -56,13 +59,11 @@ const Edit = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setToolDetails((prev) => ({ ...prev, [name]: value }));
+    setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
   const isFormDataComplete = () => {
-    return Object.values({ ...toolDetails }).every(
-      (value) => value.trim() !== ""
-    );
+    return Object.values({ ...userData }).every((value) => value.trim() !== "");
   };
 
   const handleClickOpen = () => {
@@ -71,9 +72,10 @@ const Edit = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setToolDetails({
-      name: "",
-      description: "",
+    setUserData({
+      first_name: "",
+      last_name: "",
+      email: "",
     });
   };
 
@@ -97,7 +99,7 @@ const Edit = () => {
     }
 
     try {
-      console.log(toolDetails);
+      console.log(userData);
     } catch (error: any) {
       if (error.response.data.error) {
         setLoading(false);
@@ -135,7 +137,7 @@ const Edit = () => {
               sx={{ color: "#1D1F2C", fontFamily: "Open Sans, sans-serif" }}
               fontSize={24}
             >
-              Edit Category
+              Edit Profile
             </Typography>
 
             <Button sx={{ color: "black" }} onClick={handleClose}>
@@ -143,13 +145,13 @@ const Edit = () => {
             </Button>
           </div>
 
-          <Typography
+          {/* <Typography
             fontWeight={400}
             sx={{ color: "#667085", fontFamily: "Open Sans, sans-serif" }}
             fontSize={16}
           >
             Make Changes by giving us basic details about the Category.
-          </Typography>
+          </Typography> */}
         </DialogTitle>
 
         <DialogContent sx={{ paddingY: "64px", paddingX: "25px" }}>
@@ -157,26 +159,27 @@ const Edit = () => {
             <div className="flex flex-col gap-[15px]">
               <div>
                 <Typography
-                  fontWeight={500}
+                  fontWeight={600}
                   sx={{
-                    color: focusedFields.name ? "#0167C4" : "#55555C",
+                    color: focusedFields.first_name ? "#0167C4" : "#00294E",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
                 >
-                  Name of Category
+                  First Name
                 </Typography>
                 <TextField
-                  onFocus={() => handleFocus("name")}
-                  onBlur={() => handleBlur("name")}
-                  focused={focusedFields.name}
-                  name="name"
-                  value={toolDetails.name}
                   onChange={handleChange}
+                  onFocus={() => handleFocus("first_name")}
+                  onBlur={() => handleBlur("first_name")}
+                  focused={focusedFields.first_name}
+                  name="first_name"
+                  value={userData?.first_name}
                   type="text"
                   size="small"
                   fullWidth
                   sx={{
+                    width: "373px",
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
                     },
@@ -186,26 +189,57 @@ const Edit = () => {
 
               <div>
                 <Typography
-                  fontWeight={500}
+                  fontWeight={600}
                   sx={{
-                    color: focusedFields.description ? "#0167C4" : "#55555C",
+                    color: focusedFields.last_name ? "#0167C4" : "#00294E",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
                 >
-                  Decription
+                  Last Name
                 </Typography>
                 <TextField
-                  onFocus={() => handleFocus("description")}
-                  onBlur={() => handleBlur("description")}
-                  focused={focusedFields.description}
-                  name="description"
-                  value={toolDetails.description}
                   onChange={handleChange}
+                  onFocus={() => handleFocus("last_name")}
+                  onBlur={() => handleBlur("last_name")}
+                  focused={focusedFields.last_name}
+                  name="last_name"
+                  value={userData?.last_name}
                   type="text"
                   size="small"
                   fullWidth
                   sx={{
+                    width: "373px",
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </div>
+
+              <div>
+                <Typography
+                  fontWeight={600}
+                  sx={{
+                    color: focusedFields.email ? "#0167C4" : "#00294E",
+                    fontFamily: "Open Sans, sans-serif",
+                  }}
+                  fontSize={14}
+                >
+                  Email
+                </Typography>
+                <TextField
+                  onChange={handleChange}
+                  onFocus={() => handleFocus("email")}
+                  onBlur={() => handleBlur("email")}
+                  focused={focusedFields.email}
+                  name="email"
+                  value={userData?.email}
+                  type="text"
+                  size="small"
+                  fullWidth
+                  sx={{
+                    width: "373px",
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
                     },
@@ -236,4 +270,4 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+export default Edit_Profile;

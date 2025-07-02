@@ -20,6 +20,7 @@ import review_2 from "../icons/sidebar/review_2.png";
 import settings_2 from "../icons/sidebar/settings_2.png";
 
 import { HiOutlineUsers } from "react-icons/hi";
+import Logout from "../modals/profile/LogOut";
 
 const sideItems_1 = [
   {
@@ -221,6 +222,8 @@ const Sidebar = () => {
               </div>
             </div>
           </div>
+
+          <Logout />
         </div>
       </div>
     </div>
