@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { VscEye, VscEyeClosed } from "react-icons/vsc";
 import Toast from "../../utils/Toast";
 import Auth from "../../container/Auth";
+import api from "../../utils/axiosInstance";
 
 interface LoginDetails {
   email: string;
@@ -74,7 +75,17 @@ const Sign_In = () => {
       return;
     }
     try {
-      console.log(loginDetails);
+      const response = await api.post("/api/admin/login", loginDetails);
+
+      if (response.data) {
+        setLoading(false);
+        showToast(response.data.message, "success");
+        setRedirectAfterToast("/dashboard");
+
+        // localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("adminData", JSON.stringify(response.data.data));
+        return;
+      }
     } catch (error) {
       console.error("Login error:", error);
       showToast("An error occurred while logging in.", "error");

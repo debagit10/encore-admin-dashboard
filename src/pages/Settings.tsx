@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Pages from "../container/Pages";
 import { TextField, Typography } from "@mui/material";
 import Edit_Profile from "../modals/profile/Edit_Profile";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Change_Password from "../modals/profile/Change_Password";
 
 interface UserDetails {
@@ -29,6 +29,14 @@ const Settings = () => {
   const handleBlur = (field: string) => {
     setFocusedFields((prev) => ({ ...prev, [field]: false }));
   };
+
+  useEffect(() => {
+    const adminString = localStorage.getItem("adminData");
+    if (adminString) {
+      const adminData = JSON.parse(adminString);
+      setUserData(adminData);
+    }
+  }, []);
 
   return (
     <Pages>

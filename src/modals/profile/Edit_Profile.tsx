@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Toast from "../../utils/Toast";
 import {
   Box,
@@ -62,21 +62,12 @@ const Edit_Profile = () => {
     setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const isFormDataComplete = () => {
-    return Object.values({ ...userData }).every((value) => value.trim() !== "");
-  };
-
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setUserData({
-      first_name: "",
-      last_name: "",
-      email: "",
-    });
   };
 
   const showToast = (message: string, severity: ToastState["severity"]) => {
@@ -90,13 +81,6 @@ const Edit_Profile = () => {
 
   const submit = () => {
     setLoading(true);
-    const formReady = isFormDataComplete();
-
-    if (!formReady) {
-      setLoading(false);
-      showToast("Please input all fields", "warning");
-      return;
-    }
 
     try {
       console.log(userData);
@@ -108,6 +92,14 @@ const Edit_Profile = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const adminString = localStorage.getItem("adminData");
+    if (adminString) {
+      const adminData = JSON.parse(adminString);
+      setUserData(adminData);
+    }
+  }, []);
 
   return (
     <div>

@@ -21,6 +21,7 @@ import settings_2 from "../icons/sidebar/settings_2.png";
 
 import { HiOutlineUsers } from "react-icons/hi";
 import Logout from "../modals/profile/LogOut";
+import { getInitials } from "../utils/Initials";
 
 const sideItems_1 = [
   {
@@ -48,13 +49,31 @@ const sideItems_1 = [
   { id: 3, name: "Reviews", icon: review, icon_2: review_2, route: "/reviews" },
 ];
 
+interface AdminData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+}
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [admin, setAdmin] = useState<AdminData>({
+    first_name: "",
+    last_name: "",
+    role: "",
+    email: "",
+  });
 
   const [activeRoute, setActiveRoute] = useState(location.pathname);
 
   useEffect(() => {
+    const adminString = localStorage.getItem("adminData");
+    if (adminString) {
+      const adminData = JSON.parse(adminString);
+      setAdmin(adminData);
+    }
     setActiveRoute(location.pathname); // syncs state with actual route on load or refresh
   }, [location.pathname]);
 
@@ -84,7 +103,9 @@ const Sidebar = () => {
 
         <div className="m-[1.5rem] p-[1rem] rounded-[12px] flex gap-[7px] bg-[#2B2B33]">
           <div>
-            <Avatar sx={{ width: 44, height: 44 }}>AL</Avatar>
+            <Avatar sx={{ width: 44, height: 44 }}>
+              {getInitials(`${admin.first_name} ${admin.last_name}`)}
+            </Avatar>
           </div>
 
           <div className="flex flex-col gap-[7px]">
@@ -93,7 +114,7 @@ const Sidebar = () => {
               fontSize={13}
               sx={{ fontFamily: "Open Sans, sans-serif" }}
             >
-              Ademola Lookman
+              {admin.first_name} {admin.last_name}
             </Typography>
             <Typography
               fontWeight={400}
@@ -101,7 +122,7 @@ const Sidebar = () => {
               color="#808084"
               sx={{ fontFamily: "Open Sans, sans-serif" }}
             >
-              ADMINISTRATOR
+              {admin.role}
             </Typography>
           </div>
         </div>

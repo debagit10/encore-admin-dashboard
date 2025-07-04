@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Pages from "../container/Pages";
 import { IoNotifications } from "react-icons/io5";
 import avatar from "../assets/avatar.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Total_Tools from "../components/dashboard/metrics/Total_Tools";
 import Total_Categories from "../components/dashboard/metrics/Total_Categories";
 import Pending_Reviews from "../components/dashboard/metrics/Pending_Reviews";
@@ -13,8 +13,22 @@ import Top_Rated_Tools from "../components/dashboard/Top_Rated_Tools";
 import Top_Categories from "../components/dashboard/Top_Categories";
 import Recently_Added from "../components/dashboard/Recently_Added";
 
+interface AdminData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+}
+
 const Dashboard = () => {
   const [period, setPeriod] = useState<number>(0);
+
+  const [admin, setAdmin] = useState<AdminData>({
+    first_name: "",
+    last_name: "",
+    role: "",
+    email: "",
+  });
 
   const buttonGroup = [
     { label: "All Date" },
@@ -31,6 +45,14 @@ const Dashboard = () => {
     { component: <Total_Reviews /> },
   ];
 
+  useEffect(() => {
+    const adminString = localStorage.getItem("adminData");
+    if (adminString) {
+      const adminData = JSON.parse(adminString);
+      setAdmin(adminData);
+    }
+  }, []);
+
   return (
     <Pages>
       <Navbar page="Dashboard">
@@ -42,10 +64,10 @@ const Dashboard = () => {
 
             <div className="flex flex-col gap-[4px]">
               <Typography fontWeight={500} fontSize={12} color="#0167C4">
-                Ademola Lookman
+                {admin.first_name} {admin.last_name}
               </Typography>
               <Typography fontWeight={400} fontSize={10} color="#999999">
-                ademolalookman@gmail.com
+                {admin.email}
               </Typography>
             </div>
           </div>
@@ -56,7 +78,7 @@ const Dashboard = () => {
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-[8px]">
             <Typography fontWeight={500} fontSize={24} color="#1D1F2C">
-              Welcome Back Lookman 👋🏼
+              Welcome Back {admin.first_name} 👋🏼
             </Typography>
             <Typography fontWeight={400} fontSize={14} color="#667085">
               We have your reports ready , Get ready to change the world with AI
