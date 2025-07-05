@@ -1,31 +1,63 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Pages from "../../container/Pages";
 import Navbar from "../../components/Navbar";
 import { Button, Divider, TextField, Tooltip, Typography } from "@mui/material";
 import { IoMdArrowBack } from "react-icons/io";
 
 import chat_gpt from "../../assets/chatgpt.png";
+import { useParams } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
 import Actions from "../../components/tools/Actions";
+import api from "../../utils/axiosInstance";
 
 interface ToolDetails {
   name: string;
-  short_desc: string;
-  long_desc: string;
+  description: string;
   category: string;
   logo: string;
-  demo_link: string;
-  id: string;
+  demo_url: string;
+  _id: string;
 }
 
 const View = () => {
-  const [toolData, setToolData] = useState<ToolDetails>();
+  const [toolData, setToolData] = useState<ToolDetails>({
+    name: "",
+    description: "",
+    category: "",
+    demo_url: "",
+    logo: "",
+    _id: "",
+  });
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const { id } = useParams();
 
   const navigate = useNavigate();
+
+  const getTool = async () => {
+    setLoading(true);
+
+    try {
+      const response = await api.get(`/api/tool/${id}`);
+      if (response.data.success) {
+        setToolData(response.data.data);
+        return;
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTool();
+  }, []);
+
   return (
     <Pages>
-      <Navbar page="Tool Management" component="Chat gpt" />
+      <Navbar page="Tool Management" component={`${toolData.name}`} />
 
       <div className="px-[33.5px]">
         <div className="flex justify-start mt-[1rem]">
@@ -52,7 +84,7 @@ const View = () => {
 
             <div className="flex justify-between">
               <Typography fontWeight={500} fontSize={24} color="#302F37">
-                Chatgpt
+                {toolData.name}
               </Typography>
 
               <Actions toolDetails={toolData} />
@@ -103,38 +135,12 @@ const View = () => {
                   }}
                   fontSize={14}
                 >
-                  Short Decription
+                  Decription
                 </Typography>
                 <TextField
                   disabled
                   name="short_desc"
-                  value={toolData?.short_desc}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
-
-              <div>
-                <Typography
-                  fontWeight={600}
-                  sx={{
-                    color: "#00294E",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
-                  Long Description
-                </Typography>
-                <TextField
-                  disabled
-                  name="long_desc"
-                  value={toolData?.long_desc}
+                  value={toolData?.description}
                   type="text"
                   size="small"
                   fullWidth
@@ -183,7 +189,7 @@ const View = () => {
                 <TextField
                   disabled
                   name="demo_url"
-                  value={toolData?.demo_link}
+                  value={toolData?.demo_url}
                   type="text"
                   size="small"
                   fullWidth

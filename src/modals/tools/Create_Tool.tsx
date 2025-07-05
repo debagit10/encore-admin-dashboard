@@ -6,10 +6,12 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
 import { IoCloseOutline } from "react-icons/io5";
+import api from "../../utils/axiosInstance";
 
 interface ToastState {
   open: boolean;
@@ -19,20 +21,27 @@ interface ToastState {
 
 interface ToolDetails {
   name: string;
-  short_desc: string;
-  long_desc: string;
+  description: string;
   category: string;
   demo_url: string;
   image: string;
 }
+
+const categories = [
+  "Education",
+  "Video Editing",
+  "Image Generation",
+  "Writing",
+  "A.I Chatbot & Assistant",
+  "Content Creation",
+];
 
 const Create_Tool = () => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState(false);
   const [toolDetails, setToolDetails] = useState<ToolDetails>({
     name: "",
-    short_desc: "",
-    long_desc: "",
+    description: "",
     category: "",
     demo_url: "",
     image: "",
@@ -40,8 +49,7 @@ const Create_Tool = () => {
 
   const [focusedFields, setFocusedFields] = useState({
     name: false,
-    short_desc: false,
-    long_desc: false,
+    description: false,
     demo_url: false,
   });
 
@@ -80,12 +88,13 @@ const Create_Tool = () => {
     setOpen(false);
     setToolDetails({
       name: "",
-      short_desc: "",
-      long_desc: "",
+      description: "",
       category: "",
       demo_url: "",
       image: "",
     });
+
+    setLoading(false);
   };
 
   const showToast = (message: string, severity: ToastState["severity"]) => {
@@ -97,7 +106,7 @@ const Create_Tool = () => {
     setLoading(false);
   };
 
-  const submit = () => {
+  const submit = async () => {
     setLoading(true);
     const formReady = isFormDataComplete();
 
@@ -108,7 +117,13 @@ const Create_Tool = () => {
     }
 
     try {
-      console.log(toolDetails);
+      const response = await api.post("/api/tool/add", toolDetails);
+
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+        handleClose();
+        setLoading(false);
+      }
     } catch (error: any) {
       if (error.response.data.error) {
         setLoading(false);
@@ -208,48 +223,19 @@ const Create_Tool = () => {
                 <Typography
                   fontWeight={500}
                   sx={{
-                    color: focusedFields.short_desc ? "#0167C4" : "#55555C",
+                    color: focusedFields.description ? "#0167C4" : "#55555C",
                     fontFamily: "Open Sans, sans-serif",
                   }}
                   fontSize={14}
                 >
-                  Short Decription
+                  Decription
                 </Typography>
                 <TextField
-                  onFocus={() => handleFocus("short_desc")}
-                  onBlur={() => handleBlur("short_desc")}
-                  focused={focusedFields.short_desc}
-                  name="short_desc"
-                  value={toolDetails.short_desc}
-                  onChange={handleChange}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
-
-              <div>
-                <Typography
-                  fontWeight={500}
-                  sx={{
-                    color: focusedFields.long_desc ? "#0167C4" : "#55555C",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
-                  Long Description
-                </Typography>
-                <TextField
-                  onFocus={() => handleFocus("long_desc")}
-                  onBlur={() => handleBlur("long_desc")}
-                  focused={focusedFields.long_desc}
-                  name="long_desc"
-                  value={toolDetails.long_desc}
+                  onFocus={() => handleFocus("description")}
+                  onBlur={() => handleBlur("description")}
+                  focused={focusedFields.description}
+                  name="description"
+                  value={toolDetails.description}
                   onChange={handleChange}
                   type="text"
                   size="small"
@@ -271,10 +257,10 @@ const Create_Tool = () => {
                   Category
                 </Typography>
                 <TextField
+                  select
                   name="category"
                   value={toolDetails.category}
                   onChange={handleChange}
-                  type="text"
                   size="small"
                   fullWidth
                   sx={{
@@ -282,7 +268,13 @@ const Create_Tool = () => {
                       borderRadius: "8px",
                     },
                   }}
-                />
+                >
+                  {categories.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </div>
 
               <div>

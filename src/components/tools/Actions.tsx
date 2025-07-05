@@ -10,16 +10,15 @@ import { useNavigate } from "react-router-dom";
 
 interface ToolDetails {
   name: string;
-  short_desc: string;
-  long_desc: string;
+  description: string;
   category: string;
   logo: string;
-  demo_link: string;
-  id: string;
+  demo_url: string;
+  _id: string;
 }
 
 interface ActionsProps {
-  toolDetails?: ToolDetails;
+  toolDetails: ToolDetails;
   refreshTools?: () => void;
 }
 
@@ -51,7 +50,7 @@ const Actions: React.FC<ActionsProps> = ({ toolDetails, refreshTools }) => {
         sx={{ paddingX: ".5rem" }}
       >
         <div className="flex flex-col px-[12px] ">
-          <MenuItem onClick={() => navigate(`/tool/edit/${toolDetails?.id}`)}>
+          <MenuItem onClick={() => navigate(`/tool/edit/${toolDetails._id}`)}>
             <div className="flex gap-[12px] ">
               <img src={edit_icon} className="w-[20px] h-[20px] pt-[2.5px]" />
 

@@ -22,73 +22,16 @@ import Actions from "../../components/tools/Actions";
 
 import { useNavigate } from "react-router-dom";
 
-import chatgpt from "../../assets/chatgpt.png";
+import api from "../../utils/axiosInstance";
 
 interface ToolState {
+  _id: string;
   name: string;
-  short_desc: string;
-  long_desc: string;
+  description: string;
   category: string;
   logo: string;
-  demo_link: string;
+  demo_url: string;
 }
-
-const dummyTools = [
-  {
-    id: "123",
-    logo: chatgpt,
-    name: "Chat gpt",
-    short_desc: "This is the short description",
-    long_desc: "This is the longer description",
-    category: "AI chatbot",
-    demo_link: "https://chatgpt.com",
-  },
-  {
-    id: "123",
-    logo: chatgpt,
-    name: "Chat gpt",
-    short_desc: "This is the short description",
-    long_desc: "This is the longer description",
-    category: "AI chatbot",
-    demo_link: "https://chatgpt.com",
-  },
-  {
-    id: "123",
-    logo: chatgpt,
-    name: "Chat gpt",
-    short_desc: "This is the short description",
-    long_desc: "This is the longer description",
-    category: "AI chatbot",
-    demo_link: "https://chatgpt.com",
-  },
-  {
-    id: "123",
-    logo: chatgpt,
-    name: "Chat gpt",
-    short_desc: "This is the short description",
-    long_desc: "This is the longer description",
-    category: "AI chatbot",
-    demo_link: "https://chatgpt.com",
-  },
-  {
-    id: "123",
-    logo: chatgpt,
-    name: "Chat gpt",
-    short_desc: "This is the short description",
-    long_desc: "This is the longer description",
-    category: "AI chatbot",
-    demo_link: "https://chatgpt.com",
-  },
-  {
-    id: "123",
-    logo: chatgpt,
-    name: "Chat gpt",
-    short_desc: "This is the short description",
-    long_desc: "This is the longer description",
-    category: "AI chatbot",
-    demo_link: "https://chatgpt.com",
-  },
-];
 
 const Manage = () => {
   const navigate = useNavigate();
@@ -113,12 +56,13 @@ const Manage = () => {
 
   const getTools = async () => {
     setLoading(true);
+
     try {
-      // const response = await api.get("/api/admin/getAll");
-      // if (response.data) {
-      //   setAdmins(response.data.admins);
-      //   return;
-      // }
+      const response = await api.get("/api/tool/all");
+      if (response.data.success) {
+        setTools(response.data.data);
+        return;
+      }
     } catch (error: any) {
       console.error(error);
     } finally {
@@ -131,13 +75,13 @@ const Manage = () => {
   }, []);
 
   const filteredTools = useMemo(() => {
-    if (!searchQuery.trim()) return dummyTools;
-    return dummyTools?.filter((tool) =>
+    if (!searchQuery.trim()) return tools;
+    return tools?.filter((tool) =>
       `${tool.name} ${tool.category}`
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery, dummyTools]);
+  }, [searchQuery, tools]);
 
   const paginatedTools = useMemo(() => {
     const start = page * rowsPerPage;
@@ -230,14 +174,16 @@ const Manage = () => {
               ) : paginatedTools && paginatedTools.length > 0 ? (
                 paginatedTools.map((row) => (
                   <TableRow
-                    key={row.id}
+                    key={row._id}
                     sx={{
                       cursor: "pointer",
                       height: "50px",
                       "&:last-child td, &:last-child th": { border: 0 },
                     }}
                   >
-                    <TableCell onClick={() => navigate(`/tool/view/${row.id}`)}>
+                    <TableCell
+                      onClick={() => navigate(`/tool/view/${row._id}`)}
+                    >
                       <div className="flex gap-[12px] items-center">
                         <img
                           src={row.logo}
@@ -255,22 +201,33 @@ const Manage = () => {
                         </Typography>
                       </div>
                     </TableCell>
+
                     <TableCell
                       align="left"
-                      onClick={() => navigate(`/tool/view/${row.id}`)}
+                      onClick={() => navigate(`/tool/view/${row._id}`)}
+                      sx={{
+                        maxWidth: 300,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        cursor: "pointer",
+                      }}
                     >
                       <Typography
                         color="#808084"
-                        sx={{ fontFamily: "Open Sans, sans-serif" }}
-                        fontWeight={400}
-                        fontSize={14}
+                        sx={{
+                          fontFamily: "Open Sans, sans-serif",
+                          fontWeight: 400,
+                          fontSize: 14,
+                        }}
                       >
-                        {row.short_desc}
+                        {row.description}
                       </Typography>
                     </TableCell>
+
                     <TableCell
                       align="left"
-                      onClick={() => navigate(`/tool/view/${row.id}`)}
+                      onClick={() => navigate(`/tool/view/${row._id}`)}
                     >
                       <Typography
                         color="#808084"
@@ -284,14 +241,14 @@ const Manage = () => {
 
                     <TableCell align="left">
                       <div className="bg-[#F0EEFF] rounded-[72px] py-[8px] pl-[12px] pr-[12px] w-[130px] overflow-hidden whitespace-nowrap text-ellipsis">
-                        <a target="_blank" href={row.demo_link}>
+                        <a target="_blank" href={row.demo_url}>
                           <Typography
                             color="#755AE2"
                             sx={{ fontFamily: "Open Sans, sans-serif" }}
                             fontWeight={400}
                             fontSize={14}
                           >
-                            {row.demo_link}
+                            {row.demo_url}
                           </Typography>
                         </a>
                       </div>
