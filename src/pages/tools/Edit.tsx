@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Pages from "../../container/Pages";
 import Navbar from "../../components/Navbar";
-import { Button, Divider, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  MenuItem,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { IoMdArrowBack } from "react-icons/io";
-
-import chat_gpt from "../../assets/chatgpt.png";
 
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../utils/axiosInstance";
@@ -24,6 +29,15 @@ interface ToastState {
   message: string;
   severity: "success" | "info" | "error" | "warning";
 }
+
+const categories = [
+  "Education",
+  "Video Editing",
+  "Image Generation",
+  "Writing",
+  "A.I Chatbot & Assistant",
+  "Content Creation",
+];
 
 const Edit = () => {
   const { id } = useParams();
@@ -261,6 +275,7 @@ const Edit = () => {
                   Category
                 </Typography>
                 <TextField
+                  select
                   onChange={handleChange}
                   onFocus={() => handleFocus("category")}
                   onBlur={() => handleBlur("category")}
@@ -275,7 +290,13 @@ const Edit = () => {
                       borderRadius: "8px",
                     },
                   }}
-                />
+                >
+                  {categories.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </div>
 
               <div>
