@@ -13,6 +13,7 @@ import {
 import { IoCloseOutline } from "react-icons/io5";
 
 import edit from "../../icons/tool_actions/edit.png";
+import api from "../../utils/axiosInstance";
 
 interface ToastState {
   open: boolean;
@@ -24,21 +25,34 @@ interface UserDetails {
   first_name: string;
   last_name: string;
   email: string;
+  _id: string;
 }
 
 const Edit_Profile = () => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [password, setPasswordData] = useState<string>("");
+
   const [userData, setUserData] = useState<UserDetails>({
     first_name: "",
     last_name: "",
     email: "",
+    _id: "",
+  });
+
+  const [updatedData, setUpdatedData] = useState<UserDetails>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    _id: "",
   });
 
   const [focusedFields, setFocusedFields] = useState({
     first_name: false,
     last_name: false,
     email: false,
+    password: false,
   });
 
   const [toast, setToast] = useState<ToastState>({
@@ -59,7 +73,7 @@ const Edit_Profile = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setUserData((prev) => ({ ...prev, [name]: value }));
+    setUpdatedData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleClickOpen = () => {
@@ -79,27 +93,64 @@ const Edit_Profile = () => {
     setLoading(false);
   };
 
-  const submit = () => {
+  const submit = async () => {
     setLoading(true);
 
-    try {
-      console.log(userData);
-    } catch (error: any) {
-      if (error.response.data.error) {
-        setLoading(false);
-        showToast(error.response.data.error, "error");
-        return;
+    const changedFields: Partial<typeof updatedData> = {};
+    Object.keys(updatedData).forEach((key) => {
+      const typedKey = key as keyof typeof updatedData;
+      if (updatedData[typedKey] !== userData[typedKey]) {
+        changedFields[typedKey] = updatedData[typedKey];
       }
+    });
+
+    try {
+      const response = await api.put(`/api/edit-profile/${userData._id}`, {
+        ...changedFields,
+        password,
+      });
+
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+
+        localStorage.setItem("adminData", JSON.stringify(response.data.data));
+
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
+      }
+    } catch (error: any) {
+      if (error.response?.data?.error) {
+        showToast(error.response.data.error, "error");
+      } else {
+        showToast("An unexpected error occurred", "error");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     const adminString = localStorage.getItem("adminData");
     if (adminString) {
-      const adminData = JSON.parse(adminString);
-      setUserData(adminData);
+      try {
+        const adminData = JSON.parse(adminString);
+        console.log("Parsed adminData:", adminData);
+        setUserData(adminData);
+        setUpdatedData(adminData);
+      } catch (err) {
+        console.error("Error parsing adminData", err);
+      }
     }
   }, []);
+
+  const isDataChanged = () => {
+    return (
+      userData.first_name !== updatedData.first_name ||
+      userData.last_name !== updatedData.last_name ||
+      userData.email !== updatedData.email
+    );
+  };
 
   return (
     <div>
@@ -136,14 +187,6 @@ const Edit_Profile = () => {
               <IoCloseOutline className="w-[1.5rem] h-[1.5rem] " />
             </Button>
           </div>
-
-          {/* <Typography
-            fontWeight={400}
-            sx={{ color: "#667085", fontFamily: "Open Sans, sans-serif" }}
-            fontSize={16}
-          >
-            Make Changes by giving us basic details about the Category.
-          </Typography> */}
         </DialogTitle>
 
         <DialogContent sx={{ paddingY: "64px", paddingX: "25px" }}>
@@ -166,7 +209,7 @@ const Edit_Profile = () => {
                   onBlur={() => handleBlur("first_name")}
                   focused={focusedFields.first_name}
                   name="first_name"
-                  value={userData?.first_name}
+                  value={updatedData?.first_name}
                   type="text"
                   size="small"
                   fullWidth
@@ -196,7 +239,7 @@ const Edit_Profile = () => {
                   onBlur={() => handleBlur("last_name")}
                   focused={focusedFields.last_name}
                   name="last_name"
-                  value={userData?.last_name}
+                  value={updatedData?.last_name}
                   type="text"
                   size="small"
                   fullWidth
@@ -226,7 +269,7 @@ const Edit_Profile = () => {
                   onBlur={() => handleBlur("email")}
                   focused={focusedFields.email}
                   name="email"
-                  value={userData?.email}
+                  value={updatedData?.email}
                   type="text"
                   size="small"
                   fullWidth
@@ -239,8 +282,41 @@ const Edit_Profile = () => {
                 />
               </div>
 
+              {isDataChanged() && (
+                <div>
+                  <Typography
+                    fontWeight={600}
+                    sx={{
+                      color: focusedFields.password ? "#0167C4" : "#00294E",
+                      fontFamily: "Open Sans, sans-serif",
+                    }}
+                    fontSize={14}
+                  >
+                    Password
+                  </Typography>
+                  <TextField
+                    placeholder="Enter current password to validate changes"
+                    onChange={(e) => setPasswordData(e.target.value)}
+                    onFocus={() => handleFocus("password")}
+                    onBlur={() => handleBlur("password")}
+                    focused={focusedFields.password}
+                    name="password"
+                    value={password}
+                    type="text"
+                    size="small"
+                    fullWidth
+                    sx={{
+                      width: "373px",
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "8px",
+                      },
+                    }}
+                  />
+                </div>
+              )}
+
               <Button
-                disabled={loading}
+                disabled={loading || !isDataChanged()}
                 disableElevation
                 variant="contained"
                 sx={{

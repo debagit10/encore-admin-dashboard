@@ -44,7 +44,7 @@ const Settings = () => {
         <IoNotifications color="#777777" size={20} />
       </Navbar>
 
-      <div className="px-[33.5px]">
+      <div className="px-[33.5px] h-[85vh]">
         <div className="flex justify-center mt-[2rem]">
           <div className="flex flex-col">
             <div className="flex justify-between">

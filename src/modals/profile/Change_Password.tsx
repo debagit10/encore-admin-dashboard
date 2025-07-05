@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 //import api from "../utils/axiosInstance";
 import Toast from "../../utils/Toast";
+import api from "../../utils/axiosInstance";
 
 interface ToastState {
   open: boolean;
@@ -45,10 +46,6 @@ const ChangePassword = () => {
   const handleCloseToast = () => {
     setToast((prev) => ({ ...prev, open: false }));
     setLoading(false);
-    setPasswordData({
-      curPassword: "",
-      newPassword: "",
-    });
   };
 
   const handleChange = (
@@ -70,30 +67,32 @@ const ChangePassword = () => {
     });
   };
 
-  //const stored = localStorage.getItem("adminData");
-  //const originalAdminData = stored ? JSON.parse(stored) : null;
+  const stored = localStorage.getItem("adminData");
+  const originalAdminData = stored ? JSON.parse(stored) : null;
 
   const submit = async () => {
-    // try {
-    //   setLoading(true);
-    //   const response = await api.put(
-    //     `api/admin/change-password/${originalAdminData?.email}`,
-    //     passwordData
-    //   );
-    //   if (response.data.success) {
-    //     showToast(response.data.success, "success");
-    //     setTimeout(() => {
-    //       setOpen(false);
-    //     }, 2000);
-    //   }
-    // } catch (error: any) {
-    //   if (error.response.data.error) {
-    //     console.log(error);
-    //     setLoading(false);
-    //     showToast(error.response.data.error, "error");
-    //     return;
-    //   }
-    // }
+    try {
+      setLoading(true);
+      const response = await api.put(
+        `api/admin/change-password/${originalAdminData?._id}`,
+        passwordData
+      );
+
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+
+        setTimeout(() => {
+          setOpen(false);
+        }, 2000);
+      }
+    } catch (error: any) {
+      if (error.response.data.error) {
+        console.log(error);
+        setLoading(false);
+        showToast(error.response.data.error, "error");
+        return;
+      }
+    }
   };
 
   return (
