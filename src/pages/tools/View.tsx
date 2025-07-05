@@ -10,10 +10,15 @@ import { useNavigate } from "react-router-dom";
 import Actions from "../../components/tools/Actions";
 import api from "../../utils/axiosInstance";
 
+interface Category {
+  _id: string;
+  name: string;
+}
+
 interface ToolDetails {
   name: string;
   description: string;
-  category: string;
+  category_id: Category;
   image: string;
   demo_url: string;
   _id: string;
@@ -23,10 +28,10 @@ const View = () => {
   const [toolData, setToolData] = useState<ToolDetails>({
     name: "",
     description: "",
-    category: "",
     demo_url: "",
     image: "",
     _id: "",
+    category_id: { _id: "", name: "" },
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +45,7 @@ const View = () => {
     try {
       const response = await api.get(`/api/tool/${id}`);
       if (response.data.success) {
-        setToolData(response.data.data);
+        setToolData(response.data.data[0]);
         return;
       }
     } catch (error: any) {
@@ -54,9 +59,11 @@ const View = () => {
     getTool();
   }, []);
 
+  console.log(toolData);
+
   return (
     <Pages>
-      <Navbar page="Tool Management" component={`${toolData.name}`} />
+      <Navbar page="Tool Management" component={`${toolData?.name}`} />
 
       <div className="px-[33.5px]">
         <div className="flex justify-start mt-[1rem]">
@@ -79,11 +86,11 @@ const View = () => {
 
         <div className="flex justify-center ">
           <div className="flex flex-col gap-[10px] w-[590px]">
-            <img src={toolData.image} className="w-[48px] h-[48px]" />
+            <img src={toolData?.image} className="w-[48px] h-[48px]" />
 
             <div className="flex justify-between">
               <Typography fontWeight={500} fontSize={24} color="#302F37">
-                {toolData.name}
+                {toolData?.name}
               </Typography>
 
               <Actions toolDetails={toolData} />
@@ -162,7 +169,7 @@ const View = () => {
                 <TextField
                   disabled
                   name="category"
-                  value={toolData?.category}
+                  value={toolData?.category_id?.name}
                   type="text"
                   size="small"
                   fullWidth

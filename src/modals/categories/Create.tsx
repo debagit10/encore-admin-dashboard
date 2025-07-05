@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { IoCloseOutline } from "react-icons/io5";
+import api from "../../utils/axiosInstance";
 
 interface ToastState {
   open: boolean;
@@ -17,15 +18,19 @@ interface ToastState {
   severity: "success" | "info" | "error" | "warning";
 }
 
-interface ToolDetails {
+interface CategoryDetails {
   name: string;
   description: string;
 }
 
-const Create = () => {
+interface PostCreate {
+  refreshCategories: () => void;
+}
+
+const Create: React.FC<PostCreate> = ({ refreshCategories }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState(false);
-  const [toolDetails, setToolDetails] = useState<ToolDetails>({
+  const [categoryData, setCategoryData] = useState<CategoryDetails>({
     name: "",
     description: "",
   });
@@ -53,11 +58,11 @@ const Create = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setToolDetails((prev) => ({ ...prev, [name]: value }));
+    setCategoryData((prev) => ({ ...prev, [name]: value }));
   };
 
   const isFormDataComplete = () => {
-    return Object.values({ ...toolDetails }).every(
+    return Object.values({ ...categoryData }).every(
       (value) => value.trim() !== ""
     );
   };
@@ -68,7 +73,7 @@ const Create = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setToolDetails({
+    setCategoryData({
       name: "",
       description: "",
     });
@@ -83,7 +88,7 @@ const Create = () => {
     setLoading(false);
   };
 
-  const submit = () => {
+  const submit = async () => {
     setLoading(true);
     const formReady = isFormDataComplete();
 
@@ -94,7 +99,16 @@ const Create = () => {
     }
 
     try {
-      console.log(toolDetails);
+      const response = await api.post("/api/category/add", categoryData);
+
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+
+        setTimeout(() => {
+          handleClose();
+          refreshCategories();
+        }, 2000);
+      }
     } catch (error: any) {
       if (error.response.data.error) {
         setLoading(false);
@@ -177,7 +191,7 @@ const Create = () => {
                   onBlur={() => handleBlur("name")}
                   focused={focusedFields.name}
                   name="name"
-                  value={toolDetails.name}
+                  value={categoryData.name}
                   onChange={handleChange}
                   type="text"
                   size="small"
@@ -206,7 +220,7 @@ const Create = () => {
                   onBlur={() => handleBlur("description")}
                   focused={focusedFields.description}
                   name="description"
-                  value={toolDetails.description}
+                  value={categoryData.description}
                   onChange={handleChange}
                   type="text"
                   size="small"

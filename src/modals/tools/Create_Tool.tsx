@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Toast from "../../utils/Toast";
 import {
   Box,
@@ -27,16 +27,16 @@ interface ToolDetails {
   image: string;
 }
 
-const categories = [
-  "Education",
-  "Video Editing",
-  "Image Generation",
-  "Writing",
-  "A.I Chatbot & Assistant",
-  "Content Creation",
-];
+interface CategoryDetails {
+  _id: string;
+  name: string;
+}
 
-const Create_Tool = () => {
+interface CreateToolProps {
+  refreshTools: () => void;
+}
+
+const Create_Tool: React.FC<CreateToolProps> = ({ refreshTools }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState(false);
   const [toolDetails, setToolDetails] = useState<ToolDetails>({
@@ -46,6 +46,8 @@ const Create_Tool = () => {
     demo_url: "",
     image: "",
   });
+
+  const [categories, setCategories] = useState<CategoryDetails[]>();
 
   const [focusedFields, setFocusedFields] = useState({
     name: false,
@@ -139,8 +141,12 @@ const Create_Tool = () => {
 
       if (response.data.success) {
         showToast(response.data.message, "success");
-        handleClose();
-        setLoading(false);
+
+        setTimeout(() => {
+          refreshTools();
+          handleClose();
+          setLoading(false);
+        }, 2000);
       }
     } catch (error: any) {
       if (error.response.data.error) {
@@ -150,6 +156,24 @@ const Create_Tool = () => {
       }
     }
   };
+
+  const getCategories = async () => {
+    try {
+      const response = await api.get("/api/category/all");
+      if (response.data.success) {
+        setCategories(response.data.data);
+        return;
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   return (
     <div>
@@ -287,9 +311,9 @@ const Create_Tool = () => {
                     },
                   }}
                 >
-                  {categories.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
+                  {categories?.map((option) => (
+                    <MenuItem key={option._id} value={option._id}>
+                      {option.name}
                     </MenuItem>
                   ))}
                 </TextField>

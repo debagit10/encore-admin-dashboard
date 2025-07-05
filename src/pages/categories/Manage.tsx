@@ -3,35 +3,53 @@ import Navbar from "../../components/Navbar";
 import Pages from "../../container/Pages";
 import { InputAdornment, TextField, Typography } from "@mui/material";
 import Create from "../../modals/categories/Create";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-import education from "../../icons/categories/education.png";
-import chatbot from "../../icons/categories/chatbot.png";
-import image_gen from "../../icons/categories/image_gen.png";
-import video_edit from "../../icons/categories/video_edit.png";
-import writing from "../../icons/categories/writing.png";
-import Actions from "../../components/category/Actions";
+interface CategoryDetails {
+  _id: string;
+  name: string;
+  description: string;
+  toolCount: number;
+}
 
-const dummyCategories = [
-  { icon: education, name: "Education", rating: 5, bg: "E7F3FD" },
-  { icon: chatbot, name: "Chatbot A.I Assistant", rating: 4.5, bg: "FFF0EA" },
-  { icon: image_gen, name: "Image Generation", rating: 4, bg: "EBEEFF" },
-  { icon: video_edit, name: "Video Editing", rating: 3.5, bg: "FEECEE" },
-  { icon: writing, name: "Writing", rating: 3, bg: "EAF8FF" },
-];
+import { VscDebugBreakpointDataUnverified } from "react-icons/vsc";
+import api from "../../utils/axiosInstance";
+import Actions from "../../components/category/Actions";
 
 const Categories = () => {
   const navigate = useNavigate();
+
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const [categories, setCategories] = useState<CategoryDetails[]>();
+
+  const getCategories = async () => {
+    try {
+      const response = await api.get("/api/category/all");
+      if (response.data.success) {
+        setCategories(response.data.data);
+        return;
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return dummyCategories;
-    return dummyCategories?.filter((category) =>
+    if (!searchQuery.trim()) return categories;
+    return categories?.filter((category) =>
       `${category.name}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery, dummyCategories]);
+  }, [searchQuery, categories]);
+
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   return (
     <Pages>
@@ -50,7 +68,7 @@ const Categories = () => {
             </Typography>
           </div>
 
-          <Create />
+          <Create refreshCategories={getCategories} />
         </div>
 
         <div className="flex justify-between py-[1rem]">
@@ -75,18 +93,14 @@ const Categories = () => {
         </div>
 
         <div className="border-t-[1px] border-[#E5E5E6] p-[24px] flex flex-col gap-[16px] h-[500px] overflow-y-auto ">
-          {filteredCategories.map((category) => (
+          {filteredCategories?.map((category) => (
             <div
               className="flex justify-between items-center cursor-pointer"
-              onClick={() => navigate("/category/view/123")}
+              onClick={() => navigate(`/category/view/${category._id}`)}
             >
               <div className="flex gap-[8px] items-center">
-                <div className={`bg-[#${category.bg}] rounded-[100%] p-[8px]`}>
-                  <img
-                    src={category.icon}
-                    alt={`Logo of ${category.name}`}
-                    className="w-[18px] h-[18px]"
-                  />
+                <div className="rounded-[100%] p-[8px]">
+                  <VscDebugBreakpointDataUnverified className="w-[18px] h-[18px]" />
                 </div>
                 <div className="flex flex-col gap-[2px]">
                   <Typography fontWeight={400} fontSize={14} color="#1D1F2C">
@@ -94,18 +108,23 @@ const Categories = () => {
                   </Typography>
 
                   <Typography fontWeight={400} fontSize={12} color="#667085">
-                    340 A.I Tools
+                    {category.toolCount > 1 || category.toolCount === 0
+                      ? `${category.toolCount} tools`
+                      : `${category.toolCount} tool`}
                   </Typography>
                 </div>
               </div>
 
               <div className="flex items-center gap-[20px] ">
-                <Typography fontWeight={500} fontSize={14} color="#1D1F2C">
+                {/* <Typography fontWeight={500} fontSize={14} color="#1D1F2C">
                   {category.rating}
-                </Typography>
+                </Typography> */}
 
                 <div onClick={(e) => e.stopPropagation()}>
-                  <Actions />
+                  <Actions
+                    categoryDetails={category}
+                    refreshCategories={getCategories}
+                  />
                 </div>
               </div>
             </div>

@@ -3,25 +3,32 @@ import React from "react";
 import Edit from "../../modals/categories/Edit";
 import Delete from "../../modals/categories/Delete";
 
-interface AdminsState {
+interface CategoryDetails {
+  _id: string;
   name: string;
-  email: string;
-  role: string;
-  suspended: string;
-  id: string;
+  description: string;
 }
 
 interface ActionsProps {
-  adminDetails?: AdminsState;
-  refreshAdmins?: () => void;
+  categoryDetails: CategoryDetails;
+  refreshCategories: () => void;
 }
 
-const Actions: React.FC<ActionsProps> = () => {
+const Actions: React.FC<ActionsProps> = ({
+  categoryDetails,
+  refreshCategories,
+}) => {
   return (
     <>
       <div className="flex gap-[24px]">
-        <Edit />
-        <Delete />
+        <Edit
+          categoryData={categoryDetails}
+          refreshCategory={refreshCategories}
+        />
+        <Delete
+          categoryData={categoryDetails}
+          refreshCategories={refreshCategories}
+        />
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Toast from "../../utils/Toast";
 import {
   Box,
@@ -13,6 +13,7 @@ import {
 import { IoCloseOutline } from "react-icons/io5";
 
 import edit from "../../icons/tool_actions/edit.png";
+import api from "../../utils/axiosInstance";
 
 interface ToastState {
   open: boolean;
@@ -20,15 +21,27 @@ interface ToastState {
   severity: "success" | "info" | "error" | "warning";
 }
 
-interface ToolDetails {
+interface CategoryDetails {
+  _id?: string;
   name: string;
   description: string;
 }
 
-const Edit = () => {
+interface CategoryData {
+  categoryData: CategoryDetails;
+  refreshCategory: () => void;
+}
+
+const Edit: React.FC<CategoryData> = ({ categoryData, refreshCategory }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState(false);
-  const [toolDetails, setToolDetails] = useState<ToolDetails>({
+
+  const [originalData, setOriginalData] = useState<CategoryDetails>({
+    name: "",
+    description: "",
+  });
+
+  const [updatedData, setUpdatedData] = useState<CategoryDetails>({
     name: "",
     description: "",
   });
@@ -56,13 +69,7 @@ const Edit = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setToolDetails((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const isFormDataComplete = () => {
-    return Object.values({ ...toolDetails }).every(
-      (value) => value.trim() !== ""
-    );
+    setUpdatedData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleClickOpen = () => {
@@ -71,7 +78,7 @@ const Edit = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setToolDetails({
+    setUpdatedData({
       name: "",
       description: "",
     });
@@ -86,25 +93,43 @@ const Edit = () => {
     setLoading(false);
   };
 
-  const submit = () => {
+  const submit = async () => {
     setLoading(true);
-    const formReady = isFormDataComplete();
-
-    if (!formReady) {
-      setLoading(false);
-      showToast("Please input all fields", "warning");
-      return;
-    }
 
     try {
-      console.log(toolDetails);
+      const response = await api.put(
+        `/api/category/edit/${categoryData._id}`,
+        updatedData
+      );
+
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+
+        setTimeout(() => {
+          handleClose();
+          refreshCategory();
+        }, 2000);
+      }
     } catch (error: any) {
       if (error.response.data.error) {
+        console.log(error);
         setLoading(false);
         showToast(error.response.data.error, "error");
         return;
       }
     }
+  };
+
+  useEffect(() => {
+    setOriginalData(categoryData);
+    setUpdatedData(categoryData);
+  }, [categoryData]);
+
+  const isDataChanged = () => {
+    return (
+      updatedData.name !== originalData.name ||
+      updatedData.description !== originalData.description
+    );
   };
 
   return (
@@ -171,7 +196,7 @@ const Edit = () => {
                   onBlur={() => handleBlur("name")}
                   focused={focusedFields.name}
                   name="name"
-                  value={toolDetails.name}
+                  value={updatedData.name}
                   onChange={handleChange}
                   type="text"
                   size="small"
@@ -200,7 +225,7 @@ const Edit = () => {
                   onBlur={() => handleBlur("description")}
                   focused={focusedFields.description}
                   name="description"
-                  value={toolDetails.description}
+                  value={updatedData.description}
                   onChange={handleChange}
                   type="text"
                   size="small"
@@ -214,7 +239,7 @@ const Edit = () => {
               </div>
 
               <Button
-                disabled={loading}
+                disabled={loading || !isDataChanged()}
                 disableElevation
                 variant="contained"
                 sx={{

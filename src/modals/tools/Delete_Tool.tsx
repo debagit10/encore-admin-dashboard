@@ -24,7 +24,7 @@ interface ToastState {
 }
 
 interface DeleteProps {
-  toolData: ToolDetails;
+  toolData?: ToolDetails;
   refreshTools?: () => void;
 }
 
@@ -60,7 +60,7 @@ const Delete_Tool: React.FC<DeleteProps> = ({ toolData, refreshTools }) => {
     setLoading(true);
 
     try {
-      const response = await api.delete(`/api/tool/delete/${toolData._id}`);
+      const response = await api.delete(`/api/tool/delete/${toolData?._id}`);
 
       if (response.data.success) {
         showToast(response.data.message, "success");

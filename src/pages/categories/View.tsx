@@ -4,41 +4,57 @@ import Navbar from "../../components/Navbar";
 import { Button, Divider, Tooltip, Typography } from "@mui/material";
 import { IoMdArrowBack } from "react-icons/io";
 
-import education from "../../icons/categories/education.png";
-
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Actions from "../../components/category/Actions";
 
-// interface CategoryDetails {
-//   id: string;
-//   user_id: string;
-//   logo: string;
-//   name: string;
-//   comment: string;
-//   date: string;
-//   category: string;
-//   rating: 4;
-//   status: boolean;
-// }
+import { useEffect, useState } from "react";
+import api from "../../utils/axiosInstance";
 
-import chatgpt from "../../assets/chatgpt.png";
-import claude from "../../assets/claude.png";
-import gemini from "../../assets/gemini.png";
-import deepseek from "../../assets/deepseek.png";
-import grok from "../../assets/grok.png";
+interface CategoryDetails {
+  _id: string;
+  name: string;
+  description: string;
+}
 
-const tools = [
-  { icon: claude, name: "Claude A.I", demo_url: "https://chatgpt.com" },
-  { icon: chatgpt, name: "Chat GPT", demo_url: "https://chatgpt.com" },
-  { icon: grok, name: "Grok", demo_url: "https://chatgpt.com" },
-  { icon: deepseek, name: "Deepseek", demo_url: "https://chatgpt.com" },
-  { icon: gemini, name: "Gemini", demo_url: "https://chatgpt.com" },
-];
+interface CategoryTools {
+  demo_url: string;
+  name: string;
+  image: string;
+}
 
 const View = () => {
-  //const [categoryData, setCategoryData] = useState<CategoryDetails>();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const { id } = useParams();
 
   const navigate = useNavigate();
+
+  const [categoryData, setCategoryData] = useState<CategoryDetails>({
+    _id: "",
+    name: "",
+    description: "",
+  });
+
+  const [categoryTools, setCategoryTools] = useState<CategoryTools[]>();
+
+  const getCategory = async () => {
+    try {
+      const response = await api.get(`/api/category/details/${id}`);
+      if (response.data.success) {
+        setCategoryData(response.data.data.category);
+        setCategoryTools(response.data.data.tools);
+        return;
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   return (
     <Pages>
@@ -64,15 +80,16 @@ const View = () => {
         </div>
 
         <div className="flex justify-center ">
-          <div className="flex flex-col gap-[10px] w-[590px]">
-            <img src={education} className="w-[20px] h-[20px]" />
-
+          <div className="w-[590px]">
             <div className="flex justify-between">
               <Typography fontWeight={500} fontSize={24} color="#302F37">
-                Education
+                {categoryData.name}
               </Typography>
 
-              <Actions />
+              <Actions
+                categoryDetails={categoryData}
+                refreshCategories={getCategory}
+              />
             </div>
           </div>
         </div>
@@ -84,24 +101,20 @@ const View = () => {
         <div className="flex justify-center ">
           <div className="flex flex-col gap-[24px] w-[590px]">
             <Typography fontWeight={400} fontSize={16} color="#667085">
-              Education as a category of AI models focuses on enhancing learning
-              experiences through personalized tutoring, intelligent content
-              generation, and adaptive assessment systems. These models analyze
-              student performance and behavior to provide tailored support,
-              improving engagement and learning outcomes.
+              {categoryData.description}
             </Typography>
 
             <div className="flex flex-col gap-[15px]">
               <Typography fontWeight={500} fontSize={14} color="#302F37">
-                A.I Tools Under this Category ({tools.length})
+                A.I Tools Under this Category ({categoryTools?.length})
               </Typography>
 
               <div className="h-[350px] overflow-y-auto pr-[8px] flex flex-col gap-[16px] mt-[12px]">
-                {tools.map((tool) => (
+                {categoryTools?.map((tool) => (
                   <div className="flex justify-between items-center">
                     <div className="flex gap-[8px] items-center">
                       <img
-                        src={tool.icon}
+                        src={tool.demo_url}
                         alt={`Logo of ${tool.name}`}
                         className="w-[35px] h-[35px]"
                       />

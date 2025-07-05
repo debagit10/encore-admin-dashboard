@@ -18,7 +18,7 @@ import Toast from "../../utils/Toast";
 interface ToolDetails {
   name: string;
   description: string;
-  category: string;
+  category_id: CategoryDetails;
   image: string;
   demo_url: string;
   _id: string;
@@ -30,22 +30,20 @@ interface ToastState {
   severity: "success" | "info" | "error" | "warning";
 }
 
-const categories = [
-  "Education",
-  "Video Editing",
-  "Image Generation",
-  "Writing",
-  "A.I Chatbot & Assistant",
-  "Content Creation",
-];
+interface CategoryDetails {
+  _id: string;
+  name: string;
+}
 
 const Edit = () => {
   const { id } = useParams();
 
+  const [categories, setCategories] = useState<CategoryDetails[]>();
+
   const [toolData, setToolData] = useState<ToolDetails>({
     name: "",
     description: "",
-    category: "",
+    category_id: { _id: "", name: "" },
     demo_url: "",
     image: "",
     _id: "",
@@ -54,7 +52,7 @@ const Edit = () => {
   const [originalData, setOriginalData] = useState<ToolDetails>({
     name: "",
     description: "",
-    category: "",
+    category_id: { _id: "", name: "" },
     demo_url: "",
     image: "",
     _id: "",
@@ -79,12 +77,25 @@ const Edit = () => {
 
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setToolData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    if (name === "category") {
+      const selectedCategory = categories?.find((cat) => cat._id === value);
+      if (selectedCategory) {
+        setToolData((prev) => ({
+          ...prev,
+          category_id: selectedCategory,
+        }));
+      }
+    } else {
+      setToolData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const [toast, setToast] = useState<ToastState>({
@@ -134,8 +145,22 @@ const Edit = () => {
     try {
       const response = await api.get(`/api/tool/${id}`);
       if (response.data.success) {
-        setToolData(response.data.data);
-        setOriginalData(response.data.data);
+        setToolData(response.data.data[0]);
+        setOriginalData(response.data.data[0]);
+        return;
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCategories = async () => {
+    try {
+      const response = await api.get("/api/category/all");
+      if (response.data.success) {
+        setCategories(response.data.data);
         return;
       }
     } catch (error: any) {
@@ -147,13 +172,14 @@ const Edit = () => {
 
   useEffect(() => {
     getTool();
+    getCategories();
   }, []);
 
   const isDataChanged = () => {
     return (
       toolData.name !== originalData.name ||
       toolData.description !== originalData.description ||
-      toolData.category !== originalData.category ||
+      toolData.category_id.name !== originalData.category_id.name ||
       toolData.demo_url !== originalData.demo_url
     );
   };
@@ -281,7 +307,7 @@ const Edit = () => {
                   onBlur={() => handleBlur("category")}
                   focused={focusedFields.category}
                   name="category"
-                  value={toolData?.category}
+                  value={toolData?.category_id?._id || ""}
                   type="text"
                   size="small"
                   fullWidth
@@ -291,9 +317,9 @@ const Edit = () => {
                     },
                   }}
                 >
-                  {categories.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
+                  {categories?.map((option) => (
+                    <MenuItem key={option._id} value={option._id}>
+                      {option.name}
                     </MenuItem>
                   ))}
                 </TextField>

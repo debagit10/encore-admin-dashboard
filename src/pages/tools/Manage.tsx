@@ -28,9 +28,14 @@ interface ToolState {
   _id: string;
   name: string;
   description: string;
-  category: string;
+  category_id: Category;
   image: string;
   demo_url: string;
+}
+
+interface Category {
+  _id: string;
+  name: string;
 }
 
 const Manage = () => {
@@ -77,7 +82,7 @@ const Manage = () => {
   const filteredTools = useMemo(() => {
     if (!searchQuery.trim()) return tools;
     return tools?.filter((tool) =>
-      `${tool.name} ${tool.category}`
+      `${tool.name} ${tool.category_id.name}`
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
     );
@@ -95,7 +100,7 @@ const Manage = () => {
         <div className="flex gap-[1rem] items-center">
           <IoNotifications color="#777777" size={20} />
 
-          <Create_Tool />
+          <Create_Tool refreshTools={getTools} />
         </div>
       </Navbar>
 
@@ -235,7 +240,7 @@ const Manage = () => {
                         fontWeight={400}
                         fontSize={14}
                       >
-                        {row.category}
+                        {row.category_id.name}
                       </Typography>
                     </TableCell>
 
