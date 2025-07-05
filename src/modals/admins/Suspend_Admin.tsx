@@ -8,13 +8,15 @@ import {
 import React, { useState } from "react";
 
 import { IoCloseOutline } from "react-icons/io5";
-//import api from "../../utils/axiosInstance";
+import api from "../../utils/axiosInstance";
 import Toast from "../../utils/Toast";
 
 import { MdBlock } from "react-icons/md";
+import { TbRestore } from "react-icons/tb";
 
 interface AdminDetails {
-  id?: string;
+  _id?: string;
+  suspended: string;
 }
 
 interface ToastState {
@@ -24,11 +26,11 @@ interface ToastState {
 }
 
 interface DeleteProps {
-  adminData?: AdminDetails;
-  refreshAdmins?: () => void;
+  adminData: AdminDetails;
+  refreshAdmins: () => void;
 }
 
-const Suspend_Admin: React.FC<DeleteProps> = () => {
+const Suspend_Admin: React.FC<DeleteProps> = ({ adminData, refreshAdmins }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -60,16 +62,19 @@ const Suspend_Admin: React.FC<DeleteProps> = () => {
     setLoading(true);
 
     try {
-      //   const response = await api.delete(`/api/admin/delete/${adminData.id}`);
+      const response = await api.put(
+        `/api/admin/${adminData.suspended ? "reinstate" : "suspend"}/${
+          adminData._id
+        }`
+      );
 
-      //   if (response.data) {
-      //     showToast(response.data.success, "success");
+      if (response.data.success) {
+        showToast(response.data.message, "success");
 
-      //     setTimeout(() => {
-      //       refreshAdmins();
-      //     }, 2000);
-      //   }
-      showToast("Admin removed", "success");
+        setTimeout(() => {
+          refreshAdmins();
+        }, 2000);
+      }
     } catch (error: any) {
       if (error.response.data.error) {
         console.log(error);
@@ -83,7 +88,11 @@ const Suspend_Admin: React.FC<DeleteProps> = () => {
   return (
     <div>
       <div onClick={handleClickOpen} className="flex gap-[8px] ">
-        <MdBlock className="w-[20px] h-[20px] pt-[2.5px]" />
+        {adminData.suspended ? (
+          <TbRestore className="w-[20px] h-[20px] pt-[2.5px]" />
+        ) : (
+          <MdBlock className="w-[20px] h-[20px] pt-[2.5px]" />
+        )}
 
         <Typography
           fontWeight={400}
@@ -91,14 +100,14 @@ const Suspend_Admin: React.FC<DeleteProps> = () => {
           fontFamily="Open Sans, sans-serif"
           color="#00000A"
         >
-          Suspend Admin
+          {adminData.suspended ? "Reinstate" : "Suspend"} Admin
         </Typography>
       </div>
 
       <Dialog
         open={open}
         onClose={handleClose}
-        aria-describedby="delete-dialog-description"
+        aria-describedby="suspend-dialog-description"
       >
         <Toast
           open={toast.open}
@@ -127,17 +136,23 @@ const Suspend_Admin: React.FC<DeleteProps> = () => {
         <DialogContent sx={{ width: "379px" }}>
           <div className="flex flex-col gap-[2rem]">
             <div className="flex justify-center">
-              <MdBlock className="w-[131px] h-[106px]" />
+              {adminData.suspended ? (
+                <TbRestore className="w-[131px] h-[106px]" />
+              ) : (
+                <MdBlock className="w-[131px] h-[106px]" />
+              )}
             </div>
 
             <div className="flex flex-col gap-[1rem] justify-center text-center">
               <Typography fontWeight={400} fontSize={22} color="#00000A">
-                Are you sure you want to Suspend this Admin?
+                Are you sure you want to{" "}
+                {adminData.suspended ? "Reinstate" : "Suspend"} this Admin?
               </Typography>
 
               <Typography fontWeight={400} fontSize={14} color="#55555C">
-                Suspending this admin means all records associated with this
-                admin would no longer be accessible until reinstated.
+                {adminData.suspended
+                  ? "Reinstating this admin will restore access to all records previously associated with them."
+                  : "Suspending this admin will make all records associated with them inaccessible until reinstated."}
               </Typography>
             </div>
           </div>
@@ -150,14 +165,20 @@ const Suspend_Admin: React.FC<DeleteProps> = () => {
             variant="outlined"
             sx={{
               borderRadius: "8px",
-              backgroundColor: "#FBE9E9",
-              borderColor: "#D42620",
+              backgroundColor: adminData.suspended ? "#E7F3FE" : "#FBE9E9",
+              borderColor: adminData.suspended ? "#0167C4" : "#D42620",
+              color: adminData.suspended ? "#0167C4" : "#D42620",
               textTransform: "capitalize",
               fontFamily: "Open Sans, sans-serif",
-              color: "#D42620",
             }}
           >
-            {loading ? "Suspending..." : "Suspend Admin"}
+            {loading
+              ? adminData.suspended
+                ? "Reinstating..."
+                : "Suspending..."
+              : adminData.suspended
+              ? "Reinstate Admin"
+              : "Suspend Admin"}
           </Button>
         </div>
       </Dialog>

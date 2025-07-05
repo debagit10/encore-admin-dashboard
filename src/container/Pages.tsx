@@ -13,8 +13,8 @@ const Pages: React.FC<PagesProps> = ({ children }) => {
         <Sidebar />
       </div>
 
-      <div className="ml-[280px] w-[100%]">
-        <div className="bg-[#FAFAFA] h-[87vh]">{children}</div>
+      <div className="ml-[280px] w-[100%] h-[87vh]">
+        <div className="bg-[#FAFAFA] ">{children}</div>
       </div>
     </div>
   );

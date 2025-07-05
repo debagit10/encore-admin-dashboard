@@ -5,20 +5,23 @@ import {
   DialogContent,
   Typography,
   TextField,
+  MenuItem,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { IoCloseOutline } from "react-icons/io5";
 //import api from "../../utils/axiosInstance";
 import Toast from "../../utils/Toast";
 import edit from "../../icons/tool_actions/edit.png";
+import api from "../../utils/axiosInstance";
 
-interface AdminDetails {
-  name: string;
+interface AdminsState {
+  first_name: string;
+  last_name: string;
   email: string;
   role: string;
   suspended: string;
-  id: string;
+  _id: string;
 }
 
 interface ToastState {
@@ -28,13 +31,33 @@ interface ToastState {
 }
 
 interface DeleteProps {
-  adminData?: AdminDetails;
-  refreshAdmins?: () => void;
+  adminData: AdminsState;
+  refreshAdmins: () => void;
 }
 
-const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
+const roles = ["support staff", "Admin 2", "Admin 3", "Admin 4", "Admin 5"];
+
+const Edit_Admin: React.FC<DeleteProps> = ({ adminData, refreshAdmins }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [originalData, setOriginalData] = useState<AdminsState>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    suspended: "",
+    role: "",
+    _id: "",
+  });
+
+  const [updatedData, setUpdatedData] = useState<AdminsState>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    suspended: "",
+    role: "",
+    _id: "",
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -61,7 +84,8 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
   };
 
   const [focusedFields, setFocusedFields] = useState({
-    name: false,
+    first_name: false,
+    last_name: false,
     email: false,
     role: false,
   });
@@ -74,20 +98,27 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
     setFocusedFields((prev) => ({ ...prev, [field]: false }));
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUpdatedData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const submit = async () => {
     setLoading(true);
 
     try {
-      //   const response = await api.delete(`/api/admin/delete/${adminData.id}`);
+      const response = await api.put(
+        `/api/admin/update/${adminData._id}`,
+        updatedData
+      );
 
-      //   if (response.data) {
-      //     showToast(response.data.success, "success");
+      if (response.data.success) {
+        showToast(response.data.message, "success");
 
-      //     setTimeout(() => {
-      //       refreshAdmins();
-      //     }, 2000);
-      //   }
-      showToast("Admin data updated", "success");
+        setTimeout(() => {
+          refreshAdmins();
+        }, 2000);
+      }
     } catch (error: any) {
       if (error.response.data.error) {
         console.log(error);
@@ -96,6 +127,20 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
         return;
       }
     }
+  };
+
+  useEffect(() => {
+    setOriginalData(adminData);
+    setUpdatedData(adminData);
+  }, []);
+
+  const isDataChanged = () => {
+    return (
+      updatedData.first_name !== originalData.first_name ||
+      updatedData.last_name !== originalData.last_name ||
+      updatedData.role !== originalData.role ||
+      updatedData.email !== originalData.email
+    );
   };
 
   return (
@@ -151,19 +196,49 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
               <Typography
                 fontWeight={600}
                 sx={{
-                  color: focusedFields.name ? "#0167C4" : "#00294E",
+                  color: focusedFields.first_name ? "#0167C4" : "#00294E",
                   fontFamily: "Open Sans, sans-serif",
                 }}
                 fontSize={14}
               >
-                Name
+                First Name
               </Typography>
               <TextField
-                onFocus={() => handleFocus("name")}
-                onBlur={() => handleBlur("name")}
-                focused={focusedFields.name}
-                name="name"
-                value={adminData?.name}
+                onChange={handleChange}
+                onFocus={() => handleFocus("first_name")}
+                onBlur={() => handleBlur("first_name")}
+                focused={focusedFields.first_name}
+                name="first_name"
+                value={updatedData?.first_name}
+                type="text"
+                size="small"
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </div>
+
+            <div>
+              <Typography
+                fontWeight={600}
+                sx={{
+                  color: focusedFields.last_name ? "#0167C4" : "#00294E",
+                  fontFamily: "Open Sans, sans-serif",
+                }}
+                fontSize={14}
+              >
+                Last Name
+              </Typography>
+              <TextField
+                onChange={handleChange}
+                onFocus={() => handleFocus("last_name")}
+                onBlur={() => handleBlur("last_name")}
+                focused={focusedFields.last_name}
+                name="last_name"
+                value={updatedData?.last_name}
                 type="text"
                 size="small"
                 fullWidth
@@ -187,11 +262,12 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
                 Email
               </Typography>
               <TextField
+                onChange={handleChange}
                 onFocus={() => handleFocus("email")}
                 onBlur={() => handleBlur("email")}
                 focused={focusedFields.email}
                 name="email"
-                value={adminData?.email}
+                value={updatedData?.email}
                 type="text"
                 size="small"
                 fullWidth
@@ -215,11 +291,13 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
                 Role
               </Typography>
               <TextField
+                select
+                onChange={handleChange}
                 onFocus={() => handleFocus("role")}
                 onBlur={() => handleBlur("role")}
                 focused={focusedFields.role}
                 name="role"
-                value={adminData?.role}
+                value={updatedData?.role}
                 type="text"
                 size="small"
                 fullWidth
@@ -228,11 +306,17 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
                     borderRadius: "8px",
                   },
                 }}
-              />
+              >
+                {roles.map((role) => (
+                  <MenuItem key={role} value={role}>
+                    {role}
+                  </MenuItem>
+                ))}
+              </TextField>
             </div>
 
             <Button
-              disabled={loading}
+              disabled={loading || !isDataChanged()}
               disableElevation
               variant="contained"
               sx={{

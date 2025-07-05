@@ -5,65 +5,31 @@ import { Avatar, Chip, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import Add_Admin from "../modals/admins/Add_Admin";
 import Actions from "../components/admins/Actions";
+import api from "../utils/axiosInstance";
+import { getInitials } from "../utils/Initials";
 
 interface AdminsState {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   role: string;
   suspended: string;
-  id: string;
+  _id: string;
 }
-
-const dummyAdmins = [
-  {
-    name: "Ademola Lookman",
-    email: "ademolalookman@gmail.com",
-    role: "Super admin",
-    suspended: false,
-    id: "123",
-  },
-  {
-    name: "Ademola Lookman",
-    email: "ademolalookman@gmail.com",
-    role: "Super admin",
-    suspended: true,
-    id: "123",
-  },
-  {
-    name: "Ademola Lookman",
-    email: "ademolalookman@gmail.com",
-    role: "Super admin",
-    suspended: false,
-    id: "123",
-  },
-  {
-    name: "Ademola Lookman",
-    email: "ademolalookman@gmail.com",
-    role: "Super admin",
-    suspended: true,
-    id: "123",
-  },
-  {
-    name: "Ademola Lookman",
-    email: "ademolalookman@gmail.com",
-    role: "Super admin",
-    suspended: false,
-    id: "123",
-  },
-];
 
 const Admins = () => {
   const [admins, setAdmins] = useState<AdminsState[]>();
+
   const [loading, setLoading] = useState<boolean>(true);
 
-  const getTools = async () => {
+  const getAdmins = async () => {
     setLoading(true);
     try {
-      // const response = await api.get("/api/admin/getAll");
-      // if (response.data) {
-      //   setAdmins(response.data.admins);
-      //   return;
-      // }
+      const response = await api.get("/api/admin/all");
+      if (response.data.success) {
+        setAdmins(response.data.data);
+        return;
+      }
     } catch (error: any) {
       console.error(error);
     } finally {
@@ -72,7 +38,7 @@ const Admins = () => {
   };
 
   useEffect(() => {
-    getTools();
+    getAdmins();
   }, []);
 
   return (
@@ -92,7 +58,7 @@ const Admins = () => {
           </Typography>
 
           <div className="h-[600px] overflow-y-auto">
-            {dummyAdmins.map((item) => (
+            {admins?.map((item) => (
               <div className="flex justify-between items-center mt-[.5rem] border-[1px] border-[#CCCCCE] p-[1rem] rounded-[8px]">
                 <div className="flex gap-[12px]">
                   <Avatar
@@ -103,12 +69,12 @@ const Admins = () => {
                     }}
                   >
                     <Typography color="#FFFFFF" fontSize={20} fontWeight={400}>
-                      AL
+                      {getInitials(`${item.first_name} ${item.last_name}`)}
                     </Typography>
                   </Avatar>
                   <div className="flex flex-col gap-[7px] ">
                     <Typography fontWeight={700} fontSize={13} color="#302F37">
-                      {item.name}
+                      {item.first_name} {item.last_name}
                     </Typography>
                     <Typography
                       fontWeight={400}
@@ -135,7 +101,7 @@ const Admins = () => {
                   }}
                 />
 
-                <Actions />
+                <Actions adminDetails={item} refreshAdmins={getAdmins} />
               </div>
             ))}
           </div>

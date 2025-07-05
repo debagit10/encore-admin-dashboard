@@ -8,13 +8,13 @@ import {
 import React, { useState } from "react";
 
 import { IoCloseOutline } from "react-icons/io5";
-//import api from "../../utils/axiosInstance";
+import api from "../../utils/axiosInstance";
 import Toast from "../../utils/Toast";
 import delete_img from "../../assets/delete_img.png";
 import delete_icon from "../../icons/tool_actions/delete.png";
 
 interface AdminDetails {
-  id?: string;
+  _id?: string;
 }
 
 interface ToastState {
@@ -24,11 +24,11 @@ interface ToastState {
 }
 
 interface DeleteProps {
-  adminData?: AdminDetails;
-  refreshAdmins?: () => void;
+  adminData: AdminDetails;
+  refreshAdmins: () => void;
 }
 
-const Remove_Admin: React.FC<DeleteProps> = () => {
+const Remove_Admin: React.FC<DeleteProps> = ({ adminData, refreshAdmins }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -60,16 +60,15 @@ const Remove_Admin: React.FC<DeleteProps> = () => {
     setLoading(true);
 
     try {
-      //   const response = await api.delete(`/api/admin/delete/${adminData.id}`);
+      const response = await api.delete(`/api/admin/delete/${adminData._id}`);
 
-      //   if (response.data) {
-      //     showToast(response.data.success, "success");
+      if (response.data.success) {
+        showToast(response.data.message, "success");
 
-      //     setTimeout(() => {
-      //       refreshAdmins();
-      //     }, 2000);
-      //   }
-      showToast("Admin removed", "success");
+        setTimeout(() => {
+          refreshAdmins();
+        }, 2000);
+      }
     } catch (error: any) {
       if (error.response.data.error) {
         console.log(error);

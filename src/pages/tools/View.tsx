@@ -4,7 +4,6 @@ import Navbar from "../../components/Navbar";
 import { Button, Divider, TextField, Tooltip, Typography } from "@mui/material";
 import { IoMdArrowBack } from "react-icons/io";
 
-import chat_gpt from "../../assets/chatgpt.png";
 import { useParams } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
