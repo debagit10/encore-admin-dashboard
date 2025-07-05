@@ -21,7 +21,6 @@ const View_Tool = React.lazy(() => import("./pages/tools/View"));
 const Edit_Tool = React.lazy(() => import("./pages/tools/Edit"));
 
 const View_Review = React.lazy(() => import("./pages/reviews/View"));
-const Edit_Review = React.lazy(() => import("./pages/reviews/Edit"));
 
 const View_Category = React.lazy(() => import("./pages/categories/View"));
 
@@ -46,7 +45,6 @@ function App() {
         <Route path="/tool/edit/:id" element={<Edit_Tool />} />
 
         <Route path="/review/view/:id" element={<View_Review />} />
-        <Route path="/review/edit/:id" element={<Edit_Review />} />
 
         <Route path="/category/view/:id" element={<View_Category />} />
       </Routes>

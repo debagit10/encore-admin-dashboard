@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Pages from "../../container/Pages";
 import Navbar from "../../components/Navbar";
 import { Button, Divider, TextField, Tooltip, Typography } from "@mui/material";
@@ -6,39 +6,64 @@ import { IoMdArrowBack } from "react-icons/io";
 
 import chat_gpt from "../../assets/chatgpt.png";
 
-import { useNavigate } from "react-router-dom";
-import Actions from "../../components/reviews/Actions";
-import DayAndTime from "../../utils/DayAndTime";
+import { useNavigate, useParams } from "react-router-dom";
+import { formatDayAndTime } from "../../utils/DayAndTime";
 import Rating from "../../utils/Rating";
+import Delete_Review from "../../modals/review/Delete_Review";
+import api from "../../utils/axiosInstance";
 
 interface ReviewDetails {
-  id: string;
-  user_id: string;
-  logo: string;
-  name: string;
-  comment: string;
-  date: string;
-  category: string;
+  _id: string;
+  message: string;
+  createdAt: string;
   rating: 4;
-  status: boolean;
+  toolId: ToolDetails;
+}
+
+interface ToolDetails {
+  name: string;
+  demo_url: string;
+  image: string;
+  category_id: Category;
+}
+
+interface Category {
+  name: string;
+  _id: string;
 }
 
 const View = () => {
   const [reviewData, setReviewData] = useState<ReviewDetails>();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const { id } = useParams();
+
   const navigate = useNavigate();
 
-  const submit = async () => {
+  const getReview = async () => {
+    setLoading(true);
     try {
-    } catch (error) {}
+      const response = await api.get(`/api/review/details/${id}`);
+      if (response.data) {
+        setReviewData(response.data.data);
+        return;
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    getReview();
+  }, []);
 
   return (
     <Pages>
       <Navbar page="Tool Management" component="Chat gpt" />
 
-      <div className="px-[33.5px]">
+      <div className="px-[33.5px] h-[85vh]">
         <div className="flex justify-start mt-[1rem]">
           <Tooltip title="Go back">
             <Button
@@ -66,7 +91,7 @@ const View = () => {
                 Chatgpt
               </Typography>
 
-              <Actions />
+              <Delete_Review _id={reviewData?._id} refreshReviews={getReview} />
             </div>
           </div>
         </div>
@@ -92,7 +117,7 @@ const View = () => {
                 <TextField
                   disabled
                   name="name"
-                  value={reviewData?.name}
+                  value={reviewData?.toolId.name}
                   type="text"
                   size="small"
                   fullWidth
@@ -114,38 +139,12 @@ const View = () => {
                   }}
                   fontSize={14}
                 >
-                  User ID
-                </Typography>
-                <TextField
-                  disabled
-                  name="short_desc"
-                  value={reviewData?.user_id}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
-
-              <div>
-                <Typography
-                  fontWeight={600}
-                  sx={{
-                    color: "#00294E",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
                   Comment to be reviewed
                 </Typography>
                 <TextField
                   disabled
                   name="long_desc"
-                  value={reviewData?.comment}
+                  value={reviewData?.message}
                   type="text"
                   size="small"
                   fullWidth
@@ -168,7 +167,7 @@ const View = () => {
                 <TextField
                   disabled
                   name="category"
-                  value={reviewData?.category}
+                  value={reviewData?.toolId.category_id.name}
                   type="text"
                   size="small"
                   fullWidth
@@ -194,7 +193,7 @@ const View = () => {
                 <TextField
                   disabled
                   name="demo_url"
-                  value={<DayAndTime date={reviewData?.date} />}
+                  value={formatDayAndTime(reviewData?.createdAt)}
                   type="text"
                   size="small"
                   fullWidth
@@ -217,24 +216,8 @@ const View = () => {
                 >
                   Rating
                 </Typography>
-                <Rating value={4} />
+                <Rating value={reviewData?.rating} />
               </div>
-
-              <Button
-                disabled={loading}
-                disableElevation
-                variant="contained"
-                sx={{
-                  width: "165px",
-                  padding: "10px",
-                  borderRadius: "12px",
-                  backgroundColor: "#0167C4",
-                  textTransform: "capitalize",
-                }}
-                onClick={submit}
-              >
-                {loading ? "Approving..." : "Approve"}
-              </Button>
             </div>
           </div>
         </div>

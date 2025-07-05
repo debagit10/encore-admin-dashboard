@@ -1,15 +1,10 @@
 import { IoNotifications } from "react-icons/io5";
 import Navbar from "../../components/Navbar";
 import Pages from "../../container/Pages";
-// import { Button } from "@mui/material";
+
 import {
   Box,
-  Chip,
-  FormControl,
   InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
   Skeleton,
   Table,
   TableBody,
@@ -22,103 +17,41 @@ import {
 } from "@mui/material";
 import { FiSearch } from "react-icons/fi";
 import { useEffect, useMemo, useState } from "react";
-import Actions from "../../components/reviews/Actions";
 
 import { useNavigate } from "react-router-dom";
 
 import chatgpt from "../../assets/chatgpt.png";
-import DayAndTime from "../../utils/DayAndTime";
+import { formatDayAndTime } from "../../utils/DayAndTime";
 import Rating from "../../utils/Rating";
+import Delete_Review from "../../modals/review/Delete_Review";
+import api from "../../utils/axiosInstance";
 
-interface ReviewState {
-  id: string;
-  user_id: string;
-  logo: string;
-  name: string;
-  comment: string;
-  date: string;
-  category: string;
-  rating: 4;
-  status: boolean;
+interface ReviewDetails {
+  _id: string;
+  message: string;
+  createdAt: string;
+  rating: number;
+  toolId: ToolDetails;
 }
 
-const dummyTools = [
-  {
-    id: "123",
-    user_id: "111",
-    logo: chatgpt,
-    name: "Chat gpt",
-    comment: "This is the short description",
-    date: "2025-05-29T16:21:35.385Z",
-    category: "AI chatbot",
-    rating: 4,
-    status: true,
-  },
-  {
-    id: "123",
-    user_id: "111",
-    logo: chatgpt,
-    name: "Chat gpt",
-    comment: "This is the short description",
-    date: "2025-05-29T16:21:35.385Z",
-    category: "AI chatbot",
-    rating: 4,
-    status: true,
-  },
-  {
-    id: "123",
-    user_id: "111",
-    logo: chatgpt,
-    name: "Chat gpt",
-    comment: "This is the short description",
-    date: "2025-05-29T16:21:35.385Z",
-    category: "AI chatbot",
-    rating: 4,
-    status: false,
-  },
-  {
-    id: "123",
-    user_id: "111",
-    logo: chatgpt,
-    name: "Chat gpt",
-    comment: "This is the short description",
-    date: "2025-05-29T16:21:35.385Z",
-    category: "AI chatbot",
-    rating: 4,
-    status: true,
-  },
-  {
-    id: "123",
-    user_id: "111",
-    logo: chatgpt,
-    name: "Chat gpt",
-    comment: "This is the short description",
-    date: "2025-05-29T16:21:35.385Z",
-    category: "AI chatbot",
-    rating: 4,
-    status: false,
-  },
-  {
-    id: "123",
-    user_id: "111",
-    logo: chatgpt,
-    name: "Chat gpt",
-    comment: "This is the short description",
-    date: "2025-05-29T16:21:35.385Z",
-    category: "AI chatbot",
-    rating: 4,
-    status: true,
-  },
-];
+interface ToolDetails {
+  name: string;
+  demo_url: string;
+  image: string;
+  category_id: Category;
+}
+
+interface Category {
+  name: string;
+  _id: string;
+}
 
 const Manage = () => {
   const navigate = useNavigate();
-  const [tools, setTools] = useState<ReviewState[]>();
+  const [reviews, setReviews] = useState<ReviewDetails[]>();
   const [loading, setLoading] = useState<boolean>(true);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -134,14 +67,14 @@ const Manage = () => {
     setPage(0);
   };
 
-  const getTools = async () => {
+  const getReviews = async () => {
     setLoading(true);
     try {
-      // const response = await api.get("/api/admin/getAll");
-      // if (response.data) {
-      //   setAdmins(response.data.admins);
-      //   return;
-      // }
+      const response = await api.get("/api/review/get");
+      if (response.data) {
+        setReviews(response.data.data);
+        return;
+      }
     } catch (error: any) {
       console.error(error);
     } finally {
@@ -150,28 +83,22 @@ const Manage = () => {
   };
 
   useEffect(() => {
-    getTools();
+    getReviews();
   }, []);
 
   const filteredTools = useMemo(() => {
-    let results = dummyTools;
+    let results = reviews;
 
     if (searchQuery.trim()) {
       results = results?.filter((review) =>
-        `${review.name} ${review.category}`
+        `${review.toolId.name} ${review.toolId.category_id}`
           .toLowerCase()
           .includes(searchQuery.toLowerCase())
       );
     }
 
-    if (statusFilter === "true") {
-      results = results?.filter((review) => review.status);
-    } else if (statusFilter === "false") {
-      results = results?.filter((review) => !review.status);
-    }
-
     return results;
-  }, [searchQuery, statusFilter, dummyTools]);
+  }, [searchQuery, reviews]);
 
   const paginatedTools = useMemo(() => {
     const start = page * rowsPerPage;
@@ -190,7 +117,7 @@ const Manage = () => {
           <TextField
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search A.I tools"
+            placeholder="Search reviews"
             size="small"
             sx={{
               "& .MuiOutlinedInput-root": {
@@ -205,23 +132,6 @@ const Manage = () => {
               ),
             }}
           />
-
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={statusFilter}
-              label="Status"
-              onChange={(e) => setStatusFilter(e.target.value)}
-              sx={{
-                borderRadius: "8px",
-                backgroundColor: "#fff",
-              }}
-            >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="true">Approved</MenuItem>
-              <MenuItem value="false">Pending</MenuItem>
-            </Select>
-          </FormControl>
         </div>
 
         <div className="border-t-[1px] border-[#E5E5E6] ">
@@ -239,11 +149,6 @@ const Manage = () => {
           <Table sx={{ minWidth: 650 }} aria-label="admin table" size="small">
             <TableHead>
               <TableRow sx={{ backgroundColor: "#F0F2F5", height: "45px" }}>
-                <TableCell>
-                  <Typography fontWeight={500} fontSize={12} color="#2B2B33">
-                    User ID
-                  </Typography>
-                </TableCell>
                 <TableCell align="left">
                   <Typography fontWeight={500} fontSize={12} color="#2B2B33">
                     Tool Name
@@ -269,11 +174,6 @@ const Manage = () => {
                     Rating
                   </Typography>
                 </TableCell>
-                <TableCell align="left">
-                  <Typography fontWeight={500} fontSize={12} color="#2B2B33">
-                    Status
-                  </Typography>
-                </TableCell>
                 <TableCell align="left" />
               </TableRow>
             </TableHead>
@@ -292,7 +192,7 @@ const Manage = () => {
               ) : paginatedTools && paginatedTools.length > 0 ? (
                 paginatedTools.map((row) => (
                   <TableRow
-                    key={row.id}
+                    key={row._id}
                     sx={{
                       cursor: "pointer",
                       height: "50px",
@@ -300,25 +200,12 @@ const Manage = () => {
                     }}
                   >
                     <TableCell
-                      align="left"
-                      onClick={() => navigate(`/review/view/${row.id}`)}
-                    >
-                      <Typography
-                        color="#808084"
-                        sx={{ fontFamily: "Open Sans, sans-serif" }}
-                        fontWeight={400}
-                        fontSize={14}
-                      >
-                        {row.user_id}
-                      </Typography>
-                    </TableCell>
-                    <TableCell
-                      onClick={() => navigate(`/review/view/${row.id}`)}
+                      onClick={() => navigate(`/review/view/${row._id}`)}
                     >
                       <div className="flex gap-[12px] items-center">
                         <img
-                          src={row.logo}
-                          alt={`Logo for ${row.name}`}
+                          src={row.toolId.image}
+                          alt={`Logo for ${row.toolId.name}`}
                           height={25}
                           width={25}
                         />
@@ -328,13 +215,13 @@ const Manage = () => {
                           fontWeight={400}
                           fontSize={14}
                         >
-                          {row.name}
+                          {row.toolId.name}
                         </Typography>
                       </div>
                     </TableCell>
                     <TableCell
                       align="left"
-                      onClick={() => navigate(`/review/view/${row.id}`)}
+                      onClick={() => navigate(`/review/view/${row._id}`)}
                     >
                       <Typography
                         color="#808084"
@@ -342,13 +229,13 @@ const Manage = () => {
                         fontWeight={400}
                         fontSize={14}
                       >
-                        {row.category}
+                        {row.toolId.category_id.name}
                       </Typography>
                     </TableCell>
 
                     <TableCell
                       align="left"
-                      onClick={() => navigate(`/review/view/${row.id}`)}
+                      onClick={() => navigate(`/review/view/${row._id}`)}
                     >
                       <Typography
                         color="#808084"
@@ -356,13 +243,13 @@ const Manage = () => {
                         fontWeight={400}
                         fontSize={14}
                       >
-                        <DayAndTime date={row.date} />
+                        {formatDayAndTime(row.createdAt)}
                       </Typography>
                     </TableCell>
 
                     <TableCell
                       align="left"
-                      onClick={() => navigate(`/review/view/${row.id}`)}
+                      onClick={() => navigate(`/review/view/${row._id}`)}
                     >
                       <Typography
                         color="#808084"
@@ -370,13 +257,13 @@ const Manage = () => {
                         fontWeight={400}
                         fontSize={14}
                       >
-                        {row.comment}
+                        {row.message}
                       </Typography>
                     </TableCell>
 
                     <TableCell
                       align="left"
-                      onClick={() => navigate(`/review/view/${row.id}`)}
+                      onClick={() => navigate(`/review/view/${row._id}`)}
                     >
                       <Typography
                         color="#808084"
@@ -388,23 +275,11 @@ const Manage = () => {
                       </Typography>
                     </TableCell>
 
-                    <TableCell
-                      align="left"
-                      onClick={() => navigate(`/review/view/${row.id}`)}
-                    >
-                      <Chip
-                        label={row.status ? "Approved" : "Pending"}
-                        sx={{
-                          fontFamily: "Open Sans, sans-serif",
-                          fontWeight: 500,
-                          fontSize: 14,
-                          backgroundColor: row.status ? "#d0f0c0" : "#ffe5b4",
-                          color: row.status ? "#2e7d32" : "#ff9800",
-                        }}
-                      />
-                    </TableCell>
                     <TableCell align="left">
-                      <Actions />
+                      <Delete_Review
+                        _id={row._id}
+                        refreshReviews={getReviews}
+                      />
                     </TableCell>
                   </TableRow>
                 ))

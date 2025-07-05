@@ -4,6 +4,7 @@ import {
   DialogTitle,
   DialogContent,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
 
@@ -12,9 +13,12 @@ import { IoCloseOutline } from "react-icons/io5";
 import Toast from "../../utils/Toast";
 import delete_img from "../../assets/delete_img.png";
 import delete_icon from "../../icons/tool_actions/delete.png";
+import api from "../../utils/axiosInstance";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface ReviewDetails {
-  id?: string;
+  _id?: string;
+  refreshReviews: () => void;
 }
 
 interface ToastState {
@@ -23,14 +27,12 @@ interface ToastState {
   severity: "success" | "info" | "error" | "warning";
 }
 
-interface DeleteProps {
-  reviewData?: ReviewDetails;
-  refreshTools?: () => void;
-}
-
-const Delete_Review: React.FC<DeleteProps> = () => {
+const Delete_Review: React.FC<ReviewDetails> = ({ _id, refreshReviews }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -60,15 +62,19 @@ const Delete_Review: React.FC<DeleteProps> = () => {
     setLoading(true);
 
     try {
-      //   const response = await api.delete(`/api/admin/delete/${adminData.id}`);
+      const response = await api.delete(`/api/review/delete/${_id}`);
 
-      //   if (response.data) {
-      //     showToast(response.data.success, "success");
+      if (response.data) {
+        showToast(response.data.success, "success");
 
-      //     setTimeout(() => {
-      //       refreshAdmins();
-      //     }, 2000);
-      //   }
+        setTimeout(() => {
+          if (location.pathname === `/review/view/${_id}`) {
+            navigate(-1);
+          } else {
+            refreshReviews();
+          }
+        }, 2000);
+      }
       showToast("Review deleted", "success");
     } catch (error: any) {
       if (error.response.data.error) {
@@ -82,18 +88,11 @@ const Delete_Review: React.FC<DeleteProps> = () => {
 
   return (
     <div>
-      <div onClick={handleClickOpen} className="flex gap-[12px] ">
-        <img src={delete_icon} className="w-[20px] h-[20px] pt-[2.5px]" />
-
-        <Typography
-          fontWeight={400}
-          fontSize={14}
-          fontFamily="Open Sans, sans-serif"
-          color="#00000A"
-        >
-          Delete Review
-        </Typography>
-      </div>
+      <Tooltip title="Delete review">
+        <div onClick={handleClickOpen}>
+          <img src={delete_icon} className="w-[15px] h-[15spx] pt-[2.5px]" />
+        </div>
+      </Tooltip>
 
       <Dialog
         open={open}
