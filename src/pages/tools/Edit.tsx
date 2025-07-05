@@ -14,7 +14,7 @@ interface ToolDetails {
   name: string;
   description: string;
   category: string;
-  logo: string;
+  image: string;
   demo_url: string;
   _id: string;
 }
@@ -33,7 +33,7 @@ const Edit = () => {
     description: "",
     category: "",
     demo_url: "",
-    logo: "",
+    image: "",
     _id: "",
   });
 
@@ -42,7 +42,7 @@ const Edit = () => {
     description: "",
     category: "",
     demo_url: "",
-    logo: "",
+    image: "",
     _id: "",
   });
 
@@ -176,7 +176,7 @@ const Edit = () => {
 
         <div className="flex justify-center ">
           <div className="flex flex-col gap-[10px] w-[590px]">
-            <img src={chat_gpt} className="w-[48px] h-[48px]" />
+            <img src={originalData.image} className="w-[48px] h-[48px]" />
 
             <Typography fontWeight={500} fontSize={24} color="#302F37">
               {originalData.name}

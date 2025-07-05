@@ -12,7 +12,7 @@ interface ToolDetails {
   name: string;
   description: string;
   category: string;
-  logo: string;
+  image: string;
   demo_url: string;
   _id: string;
 }

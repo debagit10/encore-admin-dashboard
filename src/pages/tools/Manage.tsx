@@ -29,7 +29,7 @@ interface ToolState {
   name: string;
   description: string;
   category: string;
-  logo: string;
+  image: string;
   demo_url: string;
 }
 
@@ -186,7 +186,7 @@ const Manage = () => {
                     >
                       <div className="flex gap-[12px] items-center">
                         <img
-                          src={row.logo}
+                          src={row.image}
                           alt={`Logo for ${row.name}`}
                           height={25}
                           width={25}

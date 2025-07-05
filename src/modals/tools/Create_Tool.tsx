@@ -106,6 +106,24 @@ const Create_Tool = () => {
     setLoading(false);
   };
 
+  const handleFileChange = async (e: any) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await api.post("/api/upload-image", formData);
+
+      if (response.data.success) {
+        setToolDetails((prev) => ({ ...prev, image: response.data.imageUrl }));
+      } else {
+        console.error("Upload failed");
+      }
+    } catch (err) {
+      console.error("Error uploading file", err);
+    }
+  };
+
   const submit = async () => {
     setLoading(true);
     const formReady = isFormDataComplete();
@@ -317,23 +335,21 @@ const Create_Tool = () => {
                 >
                   Upload Image
                 </Typography>
-                <TextField
-                  name="image"
-                  value={toolDetails.image}
-                  onChange={handleChange}
+                <input
+                  accept="image/*"
                   type="file"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
+                  onChange={handleFileChange}
+                  style={{
+                    padding: "10px 0",
+                    border: "1px solid #c4c4c4",
+                    borderRadius: "8px",
+                    width: "100%",
                   }}
                 />
               </div>
 
               <Button
-                disabled={loading}
+                disabled={!isFormDataComplete() || loading}
                 disableElevation
                 variant="contained"
                 sx={{
