@@ -23,6 +23,7 @@ import Actions from "../../components/tools/Actions";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../utils/axiosInstance";
+import ImportTools from "../../modals/tools/ImportTools";
 
 interface ToolState {
   _id: string;
@@ -124,6 +125,8 @@ const Manage = () => {
               ),
             }}
           />
+
+          <ImportTools refreshTools={getTools} />
         </div>
 
         <div className="border-t-[1px] border-[#E5E5E6] ">
