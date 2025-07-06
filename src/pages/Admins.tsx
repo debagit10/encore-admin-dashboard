@@ -19,6 +19,7 @@ interface AdminsState {
 
 const Admins = () => {
   const [admins, setAdmins] = useState<AdminsState[]>();
+  const [admin, setAdminData] = useState<AdminsState>();
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -39,6 +40,12 @@ const Admins = () => {
 
   useEffect(() => {
     getAdmins();
+
+    const adminString = localStorage.getItem("adminData");
+    if (adminString) {
+      const adminData = JSON.parse(adminString);
+      setAdminData(adminData);
+    }
   }, []);
 
   return (
@@ -74,7 +81,8 @@ const Admins = () => {
                   </Avatar>
                   <div className="flex flex-col gap-[7px] ">
                     <Typography fontWeight={700} fontSize={13} color="#302F37">
-                      {item.first_name} {item.last_name}
+                      {item.first_name} {item.last_name}{" "}
+                      {admin?._id === item._id && "(you)"}
                     </Typography>
                     <Typography
                       fontWeight={400}
@@ -90,18 +98,22 @@ const Admins = () => {
                   </div>
                 </div>
 
-                <Chip
-                  label={item.suspended ? "Suspended" : "Active"}
-                  sx={{
-                    fontFamily: "Open Sans, sans-serif",
-                    fontWeight: 500,
-                    fontSize: 14,
-                    backgroundColor: item.suspended ? "#ffcdd2" : "#c8e6c9",
-                    color: item.suspended ? "#d32f2f" : "#2e7d32",
-                  }}
-                />
+                {admin?._id !== item._id && (
+                  <Chip
+                    label={item.suspended ? "Suspended" : "Active"}
+                    sx={{
+                      fontFamily: "Open Sans, sans-serif",
+                      fontWeight: 500,
+                      fontSize: 14,
+                      backgroundColor: item.suspended ? "#ffcdd2" : "#c8e6c9",
+                      color: item.suspended ? "#d32f2f" : "#2e7d32",
+                    }}
+                  />
+                )}
 
-                <Actions adminDetails={item} refreshAdmins={getAdmins} />
+                {admin?._id !== item._id && (
+                  <Actions adminDetails={item} refreshAdmins={getAdmins} />
+                )}
               </div>
             ))}
           </div>
