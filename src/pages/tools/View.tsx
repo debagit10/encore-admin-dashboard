@@ -59,8 +59,6 @@ const View = () => {
     getTool();
   }, []);
 
-  console.log(toolData);
-
   return (
     <Pages>
       <Navbar page="Tool Management" component={`${toolData?.name}`} />
