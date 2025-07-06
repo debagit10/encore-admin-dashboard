@@ -3,7 +3,8 @@ import Auth from "../../container/Auth";
 import Toast from "../../utils/Toast";
 import { useEffect, useState } from "react";
 import OtpInput from "../../utils/OtpInput";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import api from "../../utils/axiosInstance";
 
 interface ToastState {
   open: boolean;
@@ -12,7 +13,7 @@ interface ToastState {
 }
 
 const Verify_Email = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [otp, setOtp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,14 +59,40 @@ const Verify_Email = () => {
       showToast("Please input all fields", "warning");
       return;
     }
+
+    const adminId = localStorage.getItem("adminId");
+
     try {
-      console.log(otp);
+      const response = await api.post(
+        `/api/admin/verify-forgotPassword/${adminId}`,
+        {
+          otp,
+        }
+      );
+
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
+      }
     } catch (error) {
-      console.error("Login error:", error);
-      showToast("An error occurred while logging in.", "error");
+      console.error("Verify forgot password error:", error);
+      showToast("An error occurred", "error");
       return;
     }
   };
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval); // Clean up
+  }, [timeLeft]);
 
   return (
     <Auth>
@@ -125,7 +152,7 @@ const Verify_Email = () => {
           </div>
 
           <Button
-            disabled={otp.length !== 5 || loading}
+            disabled={otp.length !== 6 || loading}
             onClick={submit}
             variant="contained"
             disableElevation

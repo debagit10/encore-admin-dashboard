@@ -6,7 +6,7 @@ interface OtpInputProps {
 }
 
 const OtpInput: React.FC<OtpInputProps> = ({ onChange }) => {
-  const length = 5;
+  const length = 6;
   const [otp, setOtp] = useState(Array(length).fill(""));
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 

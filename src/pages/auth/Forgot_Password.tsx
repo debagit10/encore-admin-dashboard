@@ -2,7 +2,8 @@ import { Typography, TextField, Button } from "@mui/material";
 import Auth from "../../container/Auth";
 import Toast from "../../utils/Toast";
 import { useState } from "react";
-//import { useNavigate } from "react-router-dom";
+import api from "../../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 interface ToastState {
   open: boolean;
@@ -11,7 +12,7 @@ interface ToastState {
 }
 
 const Forgot_Password = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,8 +44,18 @@ const Forgot_Password = () => {
       showToast("Please input all fields", "warning");
       return;
     }
+
     try {
-      console.log(email);
+      const response = await api.post("/api/admin/forgot-password", { email });
+
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+        localStorage.setItem("adminId", response.data.data._id);
+
+        setTimeout(() => {
+          navigate("/verify-email");
+        }, 2000);
+      }
     } catch (error) {
       console.error("Login error:", error);
       showToast("An error occurred while logging in.", "error");
