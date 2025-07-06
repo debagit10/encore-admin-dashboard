@@ -6,7 +6,6 @@ import avatar from "../assets/avatar.png";
 import { useEffect, useState } from "react";
 import Total_Tools from "../components/dashboard/metrics/Total_Tools";
 import Total_Categories from "../components/dashboard/metrics/Total_Categories";
-import Pending_Reviews from "../components/dashboard/metrics/Pending_Reviews";
 import Total_Reviews from "../components/dashboard/metrics/Total_Reviews";
 import Most_Viewed_Tools from "../components/dashboard/Most_Viewed_Tools";
 import Top_Rated_Tools from "../components/dashboard/Top_Rated_Tools";
@@ -41,7 +40,6 @@ const Dashboard = () => {
   const metrics = [
     { component: <Total_Tools /> },
     { component: <Total_Categories /> },
-    { component: <Pending_Reviews /> },
     { component: <Total_Reviews /> },
   ];
 
@@ -122,7 +120,7 @@ const Dashboard = () => {
         </div>
 
         <div className="flex gap-[2rem]">
-          <div>
+          <div className="">
             <div className="flex gap-[.5rem] pt-[.5rem]">
               {metrics.map((metric) => metric.component)}
             </div>
@@ -132,7 +130,7 @@ const Dashboard = () => {
             </div>
 
             <div className="pt-[.5rem] w-[767px]">
-              <Most_Viewed_Tools />
+              <Top_Rated_Tools />
             </div>
           </div>
 
@@ -142,7 +140,7 @@ const Dashboard = () => {
             </div>
 
             <div className="w-[356px] pt-[.5rem]">
-              <Top_Rated_Tools />
+              <Most_Viewed_Tools />
             </div>
           </div>
         </div>

@@ -1,36 +1,58 @@
-import { Rating, Typography } from "@mui/material";
-import chatgpt from "../../assets/chatgpt.png";
-import claude from "../../assets/claude.png";
-import gemini from "../../assets/gemini.png";
-import deepseek from "../../assets/deepseek.png";
-import grok from "../../assets/grok.png";
+import { Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import api from "../../utils/axiosInstance";
 
-const tools = [
-  { icon: chatgpt, name: "Chat GPT", rating: 5 },
-  { icon: claude, name: "Claude A.I", rating: 4.5 },
-  { icon: gemini, name: "Gemini", rating: 4 },
-  { icon: deepseek, name: "Deepseek", rating: 3.5 },
-  { icon: grok, name: "Grok", rating: 3 },
-];
+interface Tools {
+  visitCount: number;
+  toolId: string;
+  name: string;
+  image?: string;
+}
 
 const Most_Viewed_Tools = () => {
+  const [tools, setTools] = useState<Tools[]>();
+  const [loading, setLoading] = useState(false);
+
+  const getTopTools = async () => {
+    setLoading(true);
+
+    try {
+      const response = await api.get("/api/top-visited");
+      if (response.data) {
+        setTools(response.data);
+        console.log(response.data);
+        return;
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTopTools();
+  }, []);
+
+  console.log(tools);
+
   return (
     <div className="p-[24px] rounded-[8px] bg-[#f5f3f3]">
       <div className="flex flex-col gap-[12px]">
         <Typography fontWeight={500} fontSize={20} color="#1D1F2C">
-          Most Viewed A.I Tools
+          Top Rated A.I tools
         </Typography>
         <Typography fontWeight={400} fontSize={16} color="#777980">
-          Top 5 tools based on average rating
+          Top 5 tools based on average visits
         </Typography>
       </div>
 
       <div className="h-[180px] overflow-y-auto pr-[8px] flex flex-col gap-[16px] mt-[12px]">
-        {tools.map((tool) => (
-          <div key={tool.name} className="flex justify-between items-center">
+        {tools?.map((tool) => (
+          <div className="flex justify-between items-center">
             <div className="flex gap-[8px] items-center">
               <img
-                src={tool.icon}
+                src={tool.image}
                 alt={`Logo of ${tool.name}`}
                 className="w-[35px] h-[35px]"
               />
@@ -39,7 +61,9 @@ const Most_Viewed_Tools = () => {
               </Typography>
             </div>
 
-            <Rating value={tool.rating} />
+            <Typography fontWeight={500} fontSize={14} color="#1D1F2C">
+              {tool.visitCount}
+            </Typography>
           </div>
         ))}
       </div>

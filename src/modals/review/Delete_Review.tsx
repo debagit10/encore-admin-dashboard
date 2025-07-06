@@ -74,8 +74,9 @@ const Delete_Review: React.FC<ReviewDetails> = ({ _id, refreshReviews }) => {
             refreshReviews();
           }
         }, 2000);
+
+        showToast("Review deleted", "success");
       }
-      showToast("Review deleted", "success");
     } catch (error: any) {
       if (error.response.data.error) {
         console.log(error);
