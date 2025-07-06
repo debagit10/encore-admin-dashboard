@@ -5,18 +5,19 @@ import {
   DialogContent,
   Typography,
   TextField,
+  MenuItem,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-//import api from "../../utils/axiosInstance";
+import api from "../../utils/axiosInstance";
 import Toast from "../../utils/Toast";
+import GeneratePassword from "../../utils/RandomPassword";
 
 interface AdminDetails {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   role: string;
-  suspended: string;
-  id: string;
 }
 
 interface ToastState {
@@ -25,14 +26,35 @@ interface ToastState {
   severity: "success" | "info" | "error" | "warning";
 }
 
-interface DeleteProps {
-  adminData?: AdminDetails;
-  refreshAdmins?: () => void;
+interface Add_Admin {
+  refreshAdmins: () => void;
 }
 
-const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
+const roles = [
+  { name: "Support Staff", id: 0 },
+  { name: "Category Manager", id: 1 },
+  { name: "Tool Curator", id: 2 },
+];
+
+const Add_Admin: React.FC<Add_Admin> = ({ refreshAdmins }) => {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [password, setPassword] = useState<string>("");
+
+  const [adminData, setAdminData] = useState<AdminDetails>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    role: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setAdminData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -40,6 +62,7 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
 
   const handleClose = () => {
     setOpen(false);
+    setAdminData({ first_name: "", last_name: "", email: "", role: "" });
   };
 
   const [toast, setToast] = useState<ToastState>({
@@ -59,7 +82,8 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
   };
 
   const [focusedFields, setFocusedFields] = useState({
-    name: false,
+    first_name: false,
+    last_name: false,
     email: false,
     role: false,
   });
@@ -72,20 +96,37 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
     setFocusedFields((prev) => ({ ...prev, [field]: false }));
   };
 
+  const isFormDataComplete = () => {
+    return Object.values(adminData).every((value) =>
+      typeof value === "string"
+        ? value.trim() !== ""
+        : value !== null && value !== undefined
+    );
+  };
+
   const submit = async () => {
     setLoading(true);
+    const formReady = isFormDataComplete();
+
+    if (!formReady) {
+      setLoading(false);
+      showToast("Please input all fields", "warning");
+      return;
+    }
 
     try {
-      //   const response = await api.delete(`/api/admin/delete/${adminData.id}`);
+      const response = await api.post(`/api/admin/create`, {
+        ...adminData,
+        password,
+      });
 
-      //   if (response.data) {
-      //     showToast(response.data.success, "success");
+      if (response.data) {
+        showToast(response.data.message, "success");
 
-      //     setTimeout(() => {
-      //       refreshAdmins();
-      //     }, 2000);
-      //   }
-      showToast("Admin data updated", "success");
+        setTimeout(() => {
+          refreshAdmins();
+        }, 2000);
+      }
     } catch (error: any) {
       if (error.response.data.error) {
         console.log(error);
@@ -95,6 +136,10 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
       }
     }
   };
+
+  useEffect(() => {
+    setPassword(GeneratePassword());
+  }, []);
 
   return (
     <div>
@@ -159,19 +204,49 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
               <Typography
                 fontWeight={600}
                 sx={{
-                  color: focusedFields.name ? "#0167C4" : "#00294E",
+                  color: focusedFields.first_name ? "#0167C4" : "#00294E",
                   fontFamily: "Open Sans, sans-serif",
                 }}
                 fontSize={14}
               >
-                Name
+                First Name
               </Typography>
               <TextField
-                onFocus={() => handleFocus("name")}
-                onBlur={() => handleBlur("name")}
-                focused={focusedFields.name}
-                name="name"
-                value={adminData?.name}
+                onChange={handleChange}
+                onFocus={() => handleFocus("first_name")}
+                onBlur={() => handleBlur("first_name")}
+                focused={focusedFields.first_name}
+                name="first_name"
+                value={adminData?.first_name}
+                type="text"
+                size="small"
+                fullWidth
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </div>
+
+            <div>
+              <Typography
+                fontWeight={600}
+                sx={{
+                  color: focusedFields.last_name ? "#0167C4" : "#00294E",
+                  fontFamily: "Open Sans, sans-serif",
+                }}
+                fontSize={14}
+              >
+                Last Name
+              </Typography>
+              <TextField
+                onChange={handleChange}
+                onFocus={() => handleFocus("last_name")}
+                onBlur={() => handleBlur("last_name")}
+                focused={focusedFields.last_name}
+                name="last_name"
+                value={adminData?.last_name}
                 type="text"
                 size="small"
                 fullWidth
@@ -195,6 +270,7 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
                 Email
               </Typography>
               <TextField
+                onChange={handleChange}
                 onFocus={() => handleFocus("email")}
                 onBlur={() => handleBlur("email")}
                 focused={focusedFields.email}
@@ -213,22 +289,17 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
 
             <div>
               <Typography
-                fontWeight={600}
-                sx={{
-                  color: focusedFields.role ? "#0167C4" : "#00294E",
-                  fontFamily: "Open Sans, sans-serif",
-                }}
+                fontWeight={500}
+                sx={{ color: "#55555C", fontFamily: "Open Sans, sans-serif" }}
                 fontSize={14}
               >
                 Role
               </Typography>
               <TextField
-                onFocus={() => handleFocus("role")}
-                onBlur={() => handleBlur("role")}
-                focused={focusedFields.role}
+                select
                 name="role"
-                value={adminData?.role}
-                type="text"
+                value={adminData.role}
+                onChange={handleChange}
                 size="small"
                 fullWidth
                 sx={{
@@ -236,8 +307,43 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
                     borderRadius: "8px",
                   },
                 }}
-              />
+              >
+                {roles?.map((option) => (
+                  <MenuItem key={option.id} value={option.name}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </div>
+
+            {isFormDataComplete() && (
+              <div>
+                <Typography
+                  fontWeight={600}
+                  sx={{
+                    color: "#00294E",
+                    fontFamily: "Open Sans, sans-serif",
+                  }}
+                  fontSize={14}
+                >
+                  Password
+                </Typography>
+                <TextField
+                  disabled
+                  name="password"
+                  value={password}
+                  type="text"
+                  size="small"
+                  fullWidth
+                  sx={{
+                    width: "373px",
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+              </div>
+            )}
 
             <Button
               disabled={loading}
@@ -261,4 +367,4 @@ const Edit_Admin: React.FC<DeleteProps> = ({ adminData }) => {
   );
 };
 
-export default Edit_Admin;
+export default Add_Admin;

@@ -47,7 +47,7 @@ const Admins = () => {
         <div className="flex gap-[1rem] items-center">
           <IoNotifications color="#777777" size={20} />
 
-          <Add_Admin />
+          <Add_Admin refreshAdmins={getAdmins} />
         </div>
       </Navbar>
 
