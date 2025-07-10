@@ -20,7 +20,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import chatgpt from "../../assets/chatgpt.png";
 import { formatDayAndTime } from "../../utils/DayAndTime";
 import Rating from "../../utils/Rating";
 import Delete_Review from "../../modals/review/Delete_Review";
