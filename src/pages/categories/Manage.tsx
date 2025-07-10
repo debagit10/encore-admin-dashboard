@@ -1,7 +1,7 @@
 import { IoNotifications } from "react-icons/io5";
 import Navbar from "../../components/Navbar";
 import Pages from "../../container/Pages";
-import { InputAdornment, TextField, Typography } from "@mui/material";
+import { InputAdornment, Skeleton, TextField, Typography } from "@mui/material";
 import Create from "../../modals/categories/Create";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
@@ -17,6 +17,7 @@ interface CategoryDetails {
 import { VscDebugBreakpointDataUnverified } from "react-icons/vsc";
 import api from "../../utils/axiosInstance";
 import Actions from "../../components/category/Actions";
+import DynamicTitle from "../../utils/DynamicTitle";
 
 const Categories = () => {
   const navigate = useNavigate();
@@ -53,6 +54,8 @@ const Categories = () => {
 
   return (
     <Pages>
+      <DynamicTitle title="Encore AI - Categories" />
+
       <Navbar page="Categories">
         <IoNotifications size={20} color="777777" />
       </Navbar>
@@ -93,42 +96,59 @@ const Categories = () => {
         </div>
 
         <div className="border-t-[1px] border-[#E5E5E6] p-[24px] flex flex-col gap-[16px] h-[500px] overflow-y-auto ">
-          {filteredCategories?.map((category) => (
-            <div
-              className="flex justify-between items-center cursor-pointer"
-              onClick={() => navigate(`/category/view/${category._id}`)}
-            >
-              <div className="flex gap-[8px] items-center">
-                <div className="rounded-[100%] p-[8px]">
-                  <VscDebugBreakpointDataUnverified className="w-[18px] h-[18px]" />
+          {loading
+            ? [...Array(6)].map((_, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <div className="flex gap-[8px] items-center w-full">
+                    <Skeleton variant="circular" width={36} height={36} />
+                    <div className="flex flex-col gap-[4px] w-full">
+                      <Skeleton variant="text" width="30%" height={20} />
+                      <Skeleton variant="text" width="20%" height={16} />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-[2px]">
-                  <Typography fontWeight={400} fontSize={14} color="#1D1F2C">
-                    {category.name}
-                  </Typography>
+              ))
+            : filteredCategories?.map((category) => (
+                <div
+                  key={category._id}
+                  className="flex justify-between items-center cursor-pointer"
+                  onClick={() => navigate(`/category/view/${category._id}`)}
+                >
+                  <div className="flex gap-[8px] items-center">
+                    <div className="rounded-[100%] p-[8px]">
+                      <VscDebugBreakpointDataUnverified className="w-[18px] h-[18px]" />
+                    </div>
+                    <div className="flex flex-col gap-[2px]">
+                      <Typography
+                        fontWeight={400}
+                        fontSize={14}
+                        color="#1D1F2C"
+                      >
+                        {category.name}
+                      </Typography>
 
-                  <Typography fontWeight={400} fontSize={12} color="#667085">
-                    {category.toolCount > 1 || category.toolCount === 0
-                      ? `${category.toolCount} tools`
-                      : `${category.toolCount} tool`}
-                  </Typography>
+                      <Typography
+                        fontWeight={400}
+                        fontSize={12}
+                        color="#667085"
+                      >
+                        {category.toolCount > 1 || category.toolCount === 0
+                          ? `${category.toolCount} tools`
+                          : `${category.toolCount} tool`}
+                      </Typography>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-[20px]">
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Actions
+                        categoryDetails={category}
+                        refreshCategories={getCategories}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-[20px] ">
-                {/* <Typography fontWeight={500} fontSize={14} color="#1D1F2C">
-                  {category.rating}
-                </Typography> */}
-
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Actions
-                    categoryDetails={category}
-                    refreshCategories={getCategories}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+              ))}
         </div>
       </div>
     </Pages>

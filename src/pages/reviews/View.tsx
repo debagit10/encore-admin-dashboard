@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Pages from "../../container/Pages";
 import Navbar from "../../components/Navbar";
-import { Button, Divider, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  Divider,
+  Skeleton,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { IoMdArrowBack } from "react-icons/io";
-
-import chat_gpt from "../../assets/chatgpt.png";
-
 import { useNavigate, useParams } from "react-router-dom";
 import { formatDayAndTime } from "../../utils/DayAndTime";
 import Rating from "../../utils/Rating";
@@ -16,7 +20,7 @@ interface ReviewDetails {
   _id: string;
   message: string;
   createdAt: string;
-  rating: 4;
+  rating: number;
   toolId: ToolDetails;
 }
 
@@ -34,10 +38,9 @@ interface Category {
 
 const View = () => {
   const [reviewData, setReviewData] = useState<ReviewDetails>();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { id } = useParams();
-
   const navigate = useNavigate();
 
   const getReview = async () => {
@@ -46,7 +49,6 @@ const View = () => {
       const response = await api.get(`/api/review/details/${id}`);
       if (response.data) {
         setReviewData(response.data.data);
-        return;
       }
     } catch (error: any) {
       console.error(error);
@@ -58,6 +60,12 @@ const View = () => {
   useEffect(() => {
     getReview();
   }, []);
+
+  useEffect(() => {
+    if (reviewData?._id) {
+      document.title = `Encore AI - View Review`;
+    }
+  }, [reviewData?._id]);
 
   return (
     <Pages>
@@ -77,21 +85,37 @@ const View = () => {
               onClick={() => navigate(-1)}
               variant="outlined"
             >
-              <IoMdArrowBack className="w-[1.5rem] h-[1.5rem] " />
+              <IoMdArrowBack className="w-[1.5rem] h-[1.5rem]" />
             </Button>
           </Tooltip>
         </div>
 
-        <div className="flex justify-center ">
+        <div className="flex justify-center">
           <div className="flex flex-col gap-[10px] w-[590px]">
-            <img src={chat_gpt} className="w-[48px] h-[48px]" />
+            {loading ? (
+              <Skeleton variant="circular" width={48} height={48} />
+            ) : (
+              <img
+                src={reviewData?.toolId.image}
+                className="w-[48px] h-[48px]"
+              />
+            )}
 
-            <div className="flex justify-between">
-              <Typography fontWeight={500} fontSize={24} color="#302F37">
-                Chatgpt
-              </Typography>
+            <div className="flex justify-between items-center">
+              {loading ? (
+                <Skeleton width="60%" height={32} />
+              ) : (
+                <Typography fontWeight={500} fontSize={24} color="#302F37">
+                  {reviewData?.toolId.name}
+                </Typography>
+              )}
 
-              <Delete_Review _id={reviewData?._id} refreshReviews={getReview} />
+              {!loading && reviewData?._id && (
+                <Delete_Review
+                  _id={reviewData?._id}
+                  refreshReviews={getReview}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -100,61 +124,52 @@ const View = () => {
           <Divider sx={{ width: "620px" }} />
         </div>
 
-        <div className="flex justify-center ">
+        <div className="flex justify-center">
           <div className="w-[590px]">
-            <div className="flex flex-col justify-center gap-[16px] ">
-              <div>
-                <Typography
-                  fontWeight={600}
-                  sx={{
-                    color: "#00294E",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
-                  Name
-                </Typography>
-                <TextField
-                  disabled
-                  name="name"
-                  value={reviewData?.toolId.name}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    backgroundColor: "#F9F9FB",
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+            <div className="flex flex-col justify-center gap-[16px]">
+              {[
+                { label: "Name", value: reviewData?.toolId.name },
+                { label: "Comment to be reviewed", value: reviewData?.message },
+                {
+                  label: "Category",
+                  value: reviewData?.toolId.category_id.name,
+                },
+                {
+                  label: "Review Submission Date",
+                  value: formatDayAndTime(reviewData?.createdAt),
+                },
+              ].map((field, index) => (
+                <div key={index}>
+                  <Typography
+                    fontWeight={600}
+                    sx={{
+                      color: "#00294E",
+                      fontFamily: "Open Sans, sans-serif",
+                    }}
+                    fontSize={14}
+                  >
+                    {field.label}
+                  </Typography>
 
-              <div>
-                <Typography
-                  fontWeight={600}
-                  sx={{
-                    color: "#00294E",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
-                  Comment to be reviewed
-                </Typography>
-                <TextField
-                  disabled
-                  name="long_desc"
-                  value={reviewData?.message}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
+                  {loading ? (
+                    <Skeleton height={40} sx={{ borderRadius: "8px" }} />
+                  ) : (
+                    <TextField
+                      disabled
+                      value={field.value}
+                      type="text"
+                      size="small"
+                      fullWidth
+                      sx={{
+                        backgroundColor: "#F9F9FB",
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "8px",
+                        },
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
 
               <div>
                 <Typography
@@ -162,61 +177,14 @@ const View = () => {
                   sx={{ color: "#00294E", fontFamily: "Open Sans, sans-serif" }}
                   fontSize={14}
                 >
-                  Category
-                </Typography>
-                <TextField
-                  disabled
-                  name="category"
-                  value={reviewData?.toolId.category_id.name}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
-
-              <div>
-                <Typography
-                  fontWeight={600}
-                  sx={{
-                    color: "#00294E",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
-                  Review Submission Date
-                </Typography>
-                <TextField
-                  disabled
-                  name="demo_url"
-                  value={formatDayAndTime(reviewData?.createdAt)}
-                  type="text"
-                  size="small"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </div>
-
-              <div>
-                <Typography
-                  fontWeight={600}
-                  sx={{
-                    color: "#00294E",
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                  fontSize={14}
-                >
                   Rating
                 </Typography>
-                <Rating value={reviewData?.rating} />
+
+                {loading ? (
+                  <Skeleton height={30} width={120} />
+                ) : (
+                  <Rating value={reviewData?.rating} />
+                )}
               </div>
             </div>
           </div>

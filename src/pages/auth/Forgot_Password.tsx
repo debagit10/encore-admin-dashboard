@@ -4,6 +4,7 @@ import Toast from "../../utils/Toast";
 import { useState } from "react";
 import api from "../../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import DynamicTitle from "../../utils/DynamicTitle";
 
 interface ToastState {
   open: boolean;
@@ -71,6 +72,8 @@ const Forgot_Password = () => {
         severity={toast.severity}
         onClose={handleCloseToast}
       />
+
+      <DynamicTitle title="Encore AI - Forgot Password" />
 
       <div className="flex justify-center items-center h-[90vh]">
         <div className="bg-[white] w-[602px] h-[484px] flex gap-[64px] flex-col p-[40px]">

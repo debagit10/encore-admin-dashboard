@@ -5,6 +5,7 @@ import { TextField, Typography } from "@mui/material";
 import Edit_Profile from "../modals/profile/Edit_Profile";
 import { useEffect, useState } from "react";
 import Change_Password from "../modals/profile/Change_Password";
+import DynamicTitle from "../utils/DynamicTitle";
 
 interface UserDetails {
   first_name: string;
@@ -40,6 +41,8 @@ const Settings = () => {
 
   return (
     <Pages>
+      <DynamicTitle title="Encore AI - Settings" />
+
       <Navbar page="Settings">
         <IoNotifications color="#777777" size={20} />
       </Navbar>

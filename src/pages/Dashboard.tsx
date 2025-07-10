@@ -11,6 +11,7 @@ import Most_Viewed_Tools from "../components/dashboard/Most_Viewed_Tools";
 import Top_Rated_Tools from "../components/dashboard/Top_Rated_Tools";
 import Top_Categories from "../components/dashboard/Top_Categories";
 import Recently_Added from "../components/dashboard/Recently_Added";
+import DynamicTitle from "../utils/DynamicTitle";
 
 interface AdminData {
   first_name: string;
@@ -53,6 +54,7 @@ const Dashboard = () => {
 
   return (
     <Pages>
+      <DynamicTitle title="Encore AI - Admin Dashboard" />
       <Navbar page="Dashboard">
         <div className="flex gap-[1rem] items-center">
           <IoNotifications color="#777777" size={20} />

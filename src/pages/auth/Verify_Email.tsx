@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import OtpInput from "../../utils/OtpInput";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/axiosInstance";
+import DynamicTitle from "../../utils/DynamicTitle";
 
 interface ToastState {
   open: boolean;
@@ -102,6 +103,8 @@ const Verify_Email = () => {
         severity={toast.severity}
         onClose={handleCloseToast}
       />
+
+      <DynamicTitle title="Encore AI - Verify Email" />
 
       <div className="flex justify-center items-center h-[90vh]">
         <div className="bg-[white] w-[602px] h-[484px] flex gap-[64px] flex-col p-[40px]">

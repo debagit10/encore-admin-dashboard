@@ -5,6 +5,7 @@ import { VscEye, VscEyeClosed } from "react-icons/vsc";
 import Toast from "../../utils/Toast";
 import Auth from "../../container/Auth";
 import api from "../../utils/axiosInstance";
+import DynamicTitle from "../../utils/DynamicTitle";
 
 interface LoginDetails {
   email: string;
@@ -101,6 +102,9 @@ const Sign_In = () => {
         severity={toast.severity}
         onClose={handleCloseToast}
       />
+
+      <DynamicTitle title="Encore AI - Login" />
+
       <div className="flex justify-center items-center h-[90vh]">
         <div className="bg-[white] w-[602px] h-[484px] gap-[40px] flex flex-col p-[40px]">
           <div className="flex flex-col gap-[12px]">

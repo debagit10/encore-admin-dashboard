@@ -7,6 +7,7 @@ import Add_Admin from "../modals/admins/Add_Admin";
 import Actions from "../components/admins/Actions";
 import api from "../utils/axiosInstance";
 import { getInitials } from "../utils/Initials";
+import DynamicTitle from "../utils/DynamicTitle";
 
 interface AdminsState {
   first_name: string;
@@ -50,6 +51,8 @@ const Admins = () => {
 
   return (
     <Pages>
+      <DynamicTitle title="Encore AI - Admin Users" />
+
       <Navbar page="Manage Admins">
         <div className="flex gap-[1rem] items-center">
           <IoNotifications color="#777777" size={20} />

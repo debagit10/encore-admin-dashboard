@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 
 import api from "../../utils/axiosInstance";
 import ImportTools from "../../modals/tools/ImportTools";
+import DynamicTitle from "../../utils/DynamicTitle";
 
 interface ToolState {
   _id: string;
@@ -97,6 +98,8 @@ const Manage = () => {
 
   return (
     <Pages>
+      <DynamicTitle title="Encore AI - Tools" />
+
       <Navbar page="Tool Management">
         <div className="flex gap-[1rem] items-center">
           <IoNotifications color="#777777" size={20} />

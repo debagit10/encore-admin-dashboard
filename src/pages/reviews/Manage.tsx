@@ -24,6 +24,7 @@ import { formatDayAndTime } from "../../utils/DayAndTime";
 import Rating from "../../utils/Rating";
 import Delete_Review from "../../modals/review/Delete_Review";
 import api from "../../utils/axiosInstance";
+import DynamicTitle from "../../utils/DynamicTitle";
 
 interface ReviewDetails {
   _id: string;
@@ -107,6 +108,8 @@ const Manage = () => {
 
   return (
     <Pages>
+      <DynamicTitle title="Encore AI - Reviews" />
+
       <Navbar page="Review Management">
         <IoNotifications color="#777777" size={20} />
       </Navbar>
