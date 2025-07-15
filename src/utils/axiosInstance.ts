@@ -39,7 +39,7 @@ api.interceptors.response.use(
 
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_BASE_URL_DEV}/api/refreshToken`
+          `${import.meta.env.VITE_BASE_URL_PROD}/api/refreshToken`
         );
 
         const newAccessToken = res.data.accessToken;
